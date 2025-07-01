@@ -1,8 +1,9 @@
 "use client"
 
+import dynamic from 'next/dynamic'
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -13,14 +14,19 @@ import { authApi } from "@/lib/api"
 import { loginSchema } from "@/lib/validation"
 import { useValidation } from "@/hooks/use-validation"
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [serverError, setServerError] = useState("")
+  const [mounted, setMounted] = useState(false)
   const router = useRouter()
 
   const { validate, getFieldError, clearErrors } = useValidation(loginSchema)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,8 +45,8 @@ export default function LoginPage() {
     try {
       const response = await authApi.login(email, password)
       
-      // Сохраняем токен в localStorage
-      if (response.access_token) {
+      // Сохраняем токен в localStorage только на клиенте
+      if (response.access_token && typeof window !== 'undefined') {
         localStorage.setItem('admin_token', response.access_token)
         router.push("/admin")
       } else {
@@ -52,6 +58,11 @@ export default function LoginPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Не рендерим форму до монтирования компонента
+  if (!mounted) {
+    return null
   }
 
   return (
@@ -116,3 +127,8 @@ export default function LoginPage() {
     </div>
   )
 }
+
+// Экспортируем с динамическим импортом
+export default dynamic(() => Promise.resolve(LoginForm), {
+  ssr: false,
+})

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import dynamic from 'next/dynamic'
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -34,7 +35,7 @@ const statusOptions = [
   { value: 'pending', label: 'Жариялау күтуде' },
 ]
 
-export default function NewArticlePage() {
+function NewArticleForm() {
   const [title, setTitle] = useState("")
   const [titleQaz, setTitleQaz] = useState("")
   const [content, setContent] = useState("")
@@ -44,6 +45,7 @@ export default function NewArticlePage() {
   const [imageUrl, setImageUrl] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
   
   const router = useRouter()
   
@@ -51,9 +53,13 @@ export default function NewArticlePage() {
   const uploadFileMutation = useUploadFile()
   const { validate, getFieldError, clearErrors } = useValidation(createArticleSchema)
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (file) {
+    if (file && typeof window !== 'undefined') {
       setImageFile(file)
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -96,7 +102,7 @@ export default function NewArticlePage() {
       let finalImageUrl = imageUrl
       
       // Загружаем файл если есть
-      if (imageFile) {
+      if (imageFile && typeof window !== 'undefined') {
         const uploadResult = await uploadFileMutation.mutateAsync(imageFile)
         finalImageUrl = uploadResult.url
       }
@@ -124,6 +130,11 @@ export default function NewArticlePage() {
   }
 
   const isLoading = createArticleMutation.isPending || uploadFileMutation.isPending
+
+  // Не рендерим форму до монтирования компонента
+  if (!mounted) {
+    return null
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -312,3 +323,8 @@ export default function NewArticlePage() {
     </div>
   )
 }
+
+// Экспортируем с динамическим импортом
+export default dynamic(() => Promise.resolve(NewArticleForm), {
+  ssr: false,
+})

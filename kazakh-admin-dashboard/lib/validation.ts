@@ -112,13 +112,25 @@ export const loginSchema = z.object({
   password: z.string().min(6, 'Пароль должен содержать минимум 6 символов'),
 });
 
-// Схема валидации для загрузки файлов
+// Схема валидации для загрузки файлов (только на клиенте)
 export const uploadFileSchema = z.object({
-  file: z.instanceof(File).refine(
-    (file) => file.size <= 5 * 1024 * 1024, // 5MB
+  file: z.any().refine(
+    (file) => {
+      if (typeof window === 'undefined') return true; // Пропускаем на сервере
+      return file instanceof File;
+    },
+    'Файл должен быть выбран'
+  ).refine(
+    (file) => {
+      if (typeof window === 'undefined') return true; // Пропускаем на сервере
+      return file.size <= 5 * 1024 * 1024; // 5MB
+    },
     'Размер файла не должен превышать 5MB'
   ).refine(
-    (file) => ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type),
+    (file) => {
+      if (typeof window === 'undefined') return true; // Пропускаем на сервере
+      return ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(file.type);
+    },
     'Поддерживаются только изображения (JPEG, PNG, WebP, GIF)'
   ),
 });
