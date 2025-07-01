@@ -1,0 +1,33 @@
+{
+  "common": {
+    "created": "Жасалды",
+    "updated": "Жаңартылды",
+    "deleted": "Жойылды",
+    "notFound": "Табылмады",
+    "unauthorized": "Рұқсат жоқ",
+    "forbidden": "Тыйым салынған",
+    "badRequest": "Қате сұрау",
+    "internalError": "Ішкі қате",
+    "validation": {
+      "required": "Міндетті өріс",
+      "invalid": "Жарамсыз мәлімет",
+      "minLength": "Минималды ұзындық: {{min}}",
+      "maxLength": "Максималды ұзындық: {{max}}",
+      "email": "Жарамсыз email мекенжайы"
+    }
+  },
+  "auth": {
+    "loginSuccess": "Сәтті кірдіңіз",
+    "loginFailed": "Кіру сәтсіз",
+    "invalidCredentials": "Жарамсыз тіркелгі мәліметтері",
+    "tokenExpired": "Токен мерзімі өтті",
+    "logoutSuccess": "Сәтті шықтыңыз"
+  },
+  "upload": {
+    "success": "Файл сәтті жүктелді",
+    "failed": "Файл жүктеу сәтсіз",
+    "invalidType": "Жарамсыз файл түрі",
+    "tooLarge": "Файл тым үлкен",
+    "notFound": "Файл табылмады"
+  }
+} 

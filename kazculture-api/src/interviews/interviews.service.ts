@@ -1,0 +1,186 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository, Like, ILike } from 'typeorm';
+import { Interview, InterviewStatus } from './entities/interview.entity';
+import { CreateInterviewDto } from './dto/create-interview.dto';
+import { UpdateInterviewDto } from './dto/update-interview.dto';
+import {
+  PaginationDto,
+  PaginationResponseDto,
+} from '../common/dto/pagination.dto';
+
+@Injectable()
+export class InterviewsService {
+  constructor(
+    @InjectRepository(Interview)
+    private readonly interviewRepository: Repository<Interview>,
+  ) {}
+
+  private generateSlug(title: string): string {
+    return title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+  }
+
+  async create(
+    createInterviewDto: CreateInterviewDto,
+    authorId?: string,
+  ): Promise<Interview> {
+    // Генерируем slug если не предоставлен
+    if (!createInterviewDto.slug) {
+      createInterviewDto.slug = this.generateSlug(createInterviewDto.title);
+    }
+
+    const interview = this.interviewRepository.create({
+      ...createInterviewDto,
+      authorId,
+      publishedAt:
+        createInterviewDto.status === InterviewStatus.PUBLISHED
+          ? new Date()
+          : null,
+    });
+    return this.interviewRepository.save(interview);
+  }
+
+  async findAll(
+    paginationDto: PaginationDto,
+    lang: 'kaz' | 'qaz' = 'kaz',
+    status?: InterviewStatus,
+  ): Promise<PaginationResponseDto<Interview>> {
+    const { page = 1, limit = 10 } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const queryBuilder =
+      this.interviewRepository.createQueryBuilder('interview');
+
+    if (status) {
+      queryBuilder.where('interview.status = :status', { status });
+    } else {
+      queryBuilder.where('interview.status = :status', {
+        status: InterviewStatus.PUBLISHED,
+      });
+    }
+
+    const [interviews, total] = await queryBuilder
+      .orderBy('interview.createdAt', 'DESC')
+      .skip(skip)
+      .take(limit)
+      .getManyAndCount();
+
+    return {
+      data: interviews,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasNext: page < Math.ceil(total / limit),
+      hasPrev: page > 1,
+    };
+  }
+
+  async findOne(id: string, lang: 'kaz' | 'qaz' = 'kaz'): Promise<Interview> {
+    const interview = await this.interviewRepository.findOne({ where: { id } });
+    if (!interview) {
+      throw new NotFoundException('Interview not found');
+    }
+    return interview;
+  }
+
+  async findBySlug(
+    slug: string,
+    lang: 'kaz' | 'qaz' = 'kaz',
+  ): Promise<Interview> {
+    const interview = await this.interviewRepository.findOne({
+      where: { slug },
+    });
+    if (!interview || interview.status !== InterviewStatus.PUBLISHED) {
+      throw new NotFoundException('Interview not found');
+    }
+
+    // Increment views
+    interview.views += 1;
+    await this.interviewRepository.save(interview);
+
+    return interview;
+  }
+
+  async update(
+    id: string,
+    updateInterviewDto: UpdateInterviewDto,
+  ): Promise<Interview> {
+    const interview = await this.findOne(id);
+
+    // Генерируем slug если не предоставлен и изменился заголовок
+    if (!updateInterviewDto.slug && updateInterviewDto.title) {
+      updateInterviewDto.slug = this.generateSlug(updateInterviewDto.title);
+    }
+
+    if (
+      updateInterviewDto.status === InterviewStatus.PUBLISHED &&
+      interview.status !== InterviewStatus.PUBLISHED
+    ) {
+      updateInterviewDto.publishedAt = new Date();
+    }
+
+    Object.assign(interview, updateInterviewDto);
+    return this.interviewRepository.save(interview);
+  }
+
+  async remove(id: string): Promise<void> {
+    const interview = await this.findOne(id);
+    await this.interviewRepository.remove(interview);
+  }
+
+  async search(
+    query: string,
+    paginationDto: PaginationDto,
+    lang: 'kaz' | 'qaz' = 'kaz',
+  ): Promise<PaginationResponseDto<Interview>> {
+    const { page = 1, limit = 10 } = paginationDto;
+    const skip = (page - 1) * limit;
+
+    const titleField = lang === 'kaz' ? 'title' : 'titleQaz';
+    const contentField = lang === 'kaz' ? 'content' : 'contentQaz';
+
+    const [interviews, total] = await this.interviewRepository.findAndCount({
+      where: [
+        {
+          [titleField]: ILike(`%${query}%`),
+          status: InterviewStatus.PUBLISHED,
+        },
+        {
+          [contentField]: ILike(`%${query}%`),
+          status: InterviewStatus.PUBLISHED,
+        },
+        { tags: Like(`%${query}%`), status: InterviewStatus.PUBLISHED },
+      ],
+      order: { createdAt: 'DESC' },
+      skip,
+      take: limit,
+    });
+
+    return {
+      data: interviews,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+      hasNext: page < Math.ceil(total / limit),
+      hasPrev: page > 1,
+    };
+  }
+
+  async getFeatured(
+    lang: 'kaz' | 'qaz' = 'kaz',
+    limit: number = 6,
+  ): Promise<Interview[]> {
+    return this.interviewRepository.find({
+      where: { status: InterviewStatus.PUBLISHED },
+      order: { views: 'DESC', createdAt: 'DESC' },
+      take: limit,
+    });
+  }
+}
