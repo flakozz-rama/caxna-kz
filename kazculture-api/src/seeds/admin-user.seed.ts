@@ -10,7 +10,7 @@ async function seedAdminUser() {
 
     // Check if admin user already exists
     const existingAdmin = await userRepository.findOne({
-      where: { email: 'admin@kazculture.kz' }
+      where: { email: 'admin@kazculture.kz' },
     });
 
     if (existingAdmin) {
@@ -30,7 +30,6 @@ async function seedAdminUser() {
     console.log('Admin user created successfully');
     console.log('Email: admin@kazculture.kz');
     console.log('Password: admin123');
-
   } catch (error) {
     console.error('Error seeding admin user:', error);
   } finally {
@@ -52,4 +51,4 @@ if (require.main === module) {
     });
 }
 
-export { seedAdminUser }; 
+export { seedAdminUser };
