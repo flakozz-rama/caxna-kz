@@ -11,25 +11,15 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { InterviewStatus } from '../entities/interview.entity';
 
 export class CreateInterviewDto {
-  @ApiProperty({ description: 'Interview title in Kazakh' })
+  @ApiProperty({ description: 'Interview title' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiPropertyOptional({ description: 'Interview title in Qazaq' })
-  @IsOptional()
-  @IsString()
-  titleQaz?: string;
-
-  @ApiProperty({ description: 'Interview content in Kazakh' })
+  @ApiProperty({ description: 'Interview content' })
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @ApiPropertyOptional({ description: 'Interview content in Qazaq' })
-  @IsOptional()
-  @IsString()
-  contentQaz?: string;
 
   @ApiPropertyOptional({ description: 'Interviewee name' })
   @IsOptional()
@@ -65,13 +55,8 @@ export class CreateInterviewDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiPropertyOptional({ description: 'Meta description in Kazakh' })
+  @ApiPropertyOptional({ description: 'Meta description' })
   @IsOptional()
   @IsString()
   metaDescriptionKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Meta description in Qazaq' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionQaz?: string;
 }

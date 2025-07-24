@@ -15,25 +15,15 @@ import {
 } from '../entities/arnaiy-zhobala.entity';
 
 export class CreateArnaiyZhobalaDto {
-  @ApiProperty({ description: 'Event title in Kazakh' })
+  @ApiProperty({ description: 'Event title' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiPropertyOptional({ description: 'Event title in Qazaq' })
-  @IsOptional()
-  @IsString()
-  titleQaz?: string;
-
-  @ApiProperty({ description: 'Event content in Kazakh' })
+  @ApiProperty({ description: 'Event content' })
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @ApiPropertyOptional({ description: 'Event content in Qazaq' })
-  @IsOptional()
-  @IsString()
-  contentQaz?: string;
 
   @ApiPropertyOptional({ enum: ArnaiyZhobalaType, description: 'Event type' })
   @IsOptional()
@@ -68,25 +58,15 @@ export class CreateArnaiyZhobalaDto {
   @IsDateString()
   eventEndDate?: string;
 
-  @ApiPropertyOptional({ description: 'Location in Kazakh' })
+  @ApiPropertyOptional({ description: 'Location' })
   @IsOptional()
   @IsString()
   locationKaz?: string;
 
-  @ApiPropertyOptional({ description: 'Location in Qazaq' })
-  @IsOptional()
-  @IsString()
-  locationQaz?: string;
-
-  @ApiPropertyOptional({ description: 'Organizer in Kazakh' })
+  @ApiPropertyOptional({ description: 'Organizer' })
   @IsOptional()
   @IsString()
   organizerKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Organizer in Qazaq' })
-  @IsOptional()
-  @IsString()
-  organizerQaz?: string;
 
   @ApiPropertyOptional({ description: 'Contact information' })
   @IsOptional()
@@ -104,15 +84,10 @@ export class CreateArnaiyZhobalaDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiPropertyOptional({ description: 'Meta description in Kazakh' })
+  @ApiPropertyOptional({ description: 'Meta description' })
   @IsOptional()
   @IsString()
   metaDescriptionKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Meta description in Qazaq' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionQaz?: string;
 
   @ApiPropertyOptional({ description: 'Is featured event' })
   @IsOptional()

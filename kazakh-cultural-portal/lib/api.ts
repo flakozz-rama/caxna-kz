@@ -305,18 +305,54 @@ export const useSearch = (query: string) => {
 // Экспортируем старые функции для обратной совместимости
 export const getArticles = articlesApi.getAll;
 export const getArticleById = articlesApi.getById;
-export const getArticleBySlug = articlesApi.getBySlug;
+export const getArticleBySlug = async (slug: string): Promise<Article> => {
+  const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
+  if (isUuid) {
+    const response = await axiosInstance.get<Article>(`/articles/id/${slug}`);
+    return response.data;
+  } else {
+    const response = await axiosInstance.get<Article>(`/articles/${slug}`);
+    return response.data;
+  }
+};
 export const getNews = newsApi.getAll;
 export const getNewsById = newsApi.getById;
-export const getNewsBySlug = newsApi.getBySlug;
+export const getNewsBySlug = async (slug: string): Promise<News> => {
+  const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
+  if (isUuid) {
+    const response = await axiosInstance.get<News>(`/zhanalyqtar/id/${slug}`);
+    return response.data;
+  } else {
+    const response = await axiosInstance.get<News>(`/zhanalyqtar/${slug}`);
+    return response.data;
+  }
+};
 export const getVideos = videosApi.getAll;
 export const getVideoById = videosApi.getById;
 export const getInterviews = interviewsApi.getAll;
 export const getInterviewById = interviewsApi.getById;
-export const getInterviewBySlug = interviewsApi.getBySlug;
+export const getInterviewBySlug = async (slug: string): Promise<Interview> => {
+  const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
+  if (isUuid) {
+    const response = await axiosInstance.get<Interview>(`/interviews/id/${slug}`);
+    return response.data;
+  } else {
+    const response = await axiosInstance.get<Interview>(`/interviews/${slug}`);
+    return response.data;
+  }
+};
 export const getSpecialProjects = specialProjectsApi.getAll;
 export const getSpecialProjectById = specialProjectsApi.getById;
-export const getSpecialProjectBySlug = specialProjectsApi.getBySlug;
+export const getSpecialProjectBySlug = async (slug: string): Promise<SpecialProject> => {
+  const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
+  if (isUuid) {
+    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/id/${slug}`);
+    return response.data;
+  } else {
+    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/${slug}`);
+    return response.data;
+  }
+};
 
 // Заглушки для функций, которые не реализованы в API
 export const getPlays = async () => {

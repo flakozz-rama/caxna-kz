@@ -47,15 +47,11 @@ export class InterviewsService {
 
   async findAll(
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
     status?: InterviewStatus,
   ): Promise<PaginationResponseDto<Interview>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const queryBuilder =
-      this.interviewRepository.createQueryBuilder('interview');
-
+    const queryBuilder = this.interviewRepository.createQueryBuilder('interview');
     if (status) {
       queryBuilder.where('interview.status = :status', { status });
     } else {
@@ -63,13 +59,11 @@ export class InterviewsService {
         status: InterviewStatus.PUBLISHED,
       });
     }
-
     const [interviews, total] = await queryBuilder
       .orderBy('interview.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
       .getManyAndCount();
-
     return {
       data: interviews,
       total,
@@ -81,7 +75,7 @@ export class InterviewsService {
     };
   }
 
-  async findOne(id: string, lang: 'kaz' | 'qaz' = 'kaz'): Promise<Interview> {
+  async findOne(id: string): Promise<Interview> {
     const interview = await this.interviewRepository.findOne({ where: { id } });
     if (!interview) {
       throw new NotFoundException('Interview not found');
@@ -89,21 +83,13 @@ export class InterviewsService {
     return interview;
   }
 
-  async findBySlug(
-    slug: string,
-    lang: 'kaz' | 'qaz' = 'kaz',
-  ): Promise<Interview> {
-    const interview = await this.interviewRepository.findOne({
-      where: { slug },
-    });
+  async findBySlug(slug: string): Promise<Interview> {
+    const interview = await this.interviewRepository.findOne({ where: { slug } });
     if (!interview || interview.status !== InterviewStatus.PUBLISHED) {
       throw new NotFoundException('Interview not found');
     }
-
-    // Increment views
     interview.views += 1;
     await this.interviewRepository.save(interview);
-
     return interview;
   }
 
@@ -137,31 +123,19 @@ export class InterviewsService {
   async search(
     query: string,
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
   ): Promise<PaginationResponseDto<Interview>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const titleField = lang === 'kaz' ? 'title' : 'titleQaz';
-    const contentField = lang === 'kaz' ? 'content' : 'contentQaz';
-
     const [interviews, total] = await this.interviewRepository.findAndCount({
       where: [
-        {
-          [titleField]: ILike(`%${query}%`),
-          status: InterviewStatus.PUBLISHED,
-        },
-        {
-          [contentField]: ILike(`%${query}%`),
-          status: InterviewStatus.PUBLISHED,
-        },
+        { title: ILike(`%${query}%`), status: InterviewStatus.PUBLISHED },
+        { content: ILike(`%${query}%`), status: InterviewStatus.PUBLISHED },
         { tags: Like(`%${query}%`), status: InterviewStatus.PUBLISHED },
       ],
       order: { createdAt: 'DESC' },
       skip,
       take: limit,
     });
-
     return {
       data: interviews,
       total,
@@ -173,14 +147,15 @@ export class InterviewsService {
     };
   }
 
-  async getFeatured(
-    lang: 'kaz' | 'qaz' = 'kaz',
-    limit: number = 6,
-  ): Promise<Interview[]> {
-    return this.interviewRepository.find({
-      where: { status: InterviewStatus.PUBLISHED },
-      order: { views: 'DESC', createdAt: 'DESC' },
-      take: limit,
+  async getFeatured(limit?: number): Promise<Interview[]> {
+    const queryBuilder = this.interviewRepository.createQueryBuilder('interview');
+    queryBuilder.where('interview.status = :status', {
+      status: InterviewStatus.PUBLISHED,
     });
+    queryBuilder.orderBy('interview.createdAt', 'DESC');
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+    return queryBuilder.getMany();
   }
 }

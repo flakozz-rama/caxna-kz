@@ -14,14 +14,8 @@ export class Interview extends BaseEntity {
   @Column({ name: 'title', length: 500 })
   title: string;
 
-  @Column({ name: 'title_qaz', length: 500, nullable: true })
-  titleQaz: string;
-
   @Column({ name: 'content', type: 'text' })
   content: string;
-
-  @Column({ name: 'content_qaz', type: 'text', nullable: true })
-  contentQaz: string;
 
   @Column({ name: 'interviewee', length: 200, nullable: true })
   interviewee: string;
@@ -53,10 +47,4 @@ export class Interview extends BaseEntity {
 
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
-
-  @Column({ name: 'meta_description_kaz', length: 500, nullable: true })
-  metaDescriptionKaz: string;
-
-  @Column({ name: 'meta_description_qaz', length: 500, nullable: true })
-  metaDescriptionQaz: string;
 }

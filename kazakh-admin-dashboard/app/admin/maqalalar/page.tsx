@@ -149,12 +149,6 @@ export default function ArticlesPage() {
                         Өңдеу
                       </Button>
                     </Link>
-                    <Link href={`/maqala/${article.slug || article.id}`} target="_blank">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4 mr-1" />
-                        Көру
-                      </Button>
-                    </Link>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">

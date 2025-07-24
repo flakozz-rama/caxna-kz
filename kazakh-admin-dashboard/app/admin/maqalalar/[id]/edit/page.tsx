@@ -17,17 +17,20 @@ import { toast } from "@/hooks/use-toast"
 const categories = ["Мәдениет", "Тарих", "Өнер", "Музыка", "Әдебиет", "Дәстүр", "Заманауи өмір"]
 
 export default function EditArticlePage({ params }: { params: { id: string } }) {
+  const router = useRouter();
+  useEffect(() => {
+    if (params.id === "admin") {
+      router.replace("/admin/maqalalar");
+    }
+  }, [params.id, router]);
+
   const [title, setTitle] = useState("")
-  const [titleQaz, setTitleQaz] = useState("")
   const [content, setContent] = useState("")
-  const [contentQaz, setContentQaz] = useState("")
   const [category, setCategory] = useState("")
   const [status, setStatus] = useState<"draft" | "published" | "pending">("draft")
   const [imageUrl, setImageUrl] = useState("")
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  
-  const router = useRouter()
   
   const { data: article, isLoading: isLoadingArticle } = useArticle(params.id)
   const updateArticleMutation = useUpdateArticle()
@@ -37,9 +40,7 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
   useEffect(() => {
     if (article) {
       setTitle(article.title || "")
-      setTitleQaz(article.titleQaz || "")
       setContent(article.content || "")
-      setContentQaz(article.contentQaz || "")
       setCategory(article.category || "")
       setStatus(article.status || "draft")
       setImageUrl(article.imageUrl || "")
@@ -77,9 +78,7 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
 
       const articleData = {
         title,
-        titleQaz,
         content,
-        contentQaz,
         category,
         status,
         imageUrl: finalImageUrl,
@@ -159,12 +158,7 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
               <CardTitle>Негізгі ақпарат</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Tabs defaultValue="kaz" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="kaz">Қазақша</TabsTrigger>
-                  <TabsTrigger value="qaz">Qazaqşa</TabsTrigger>
-                </TabsList>
-                
+              
                 <TabsContent value="kaz" className="space-y-4">
                   <div>
                     <Label htmlFor="title" className="text-base font-medium mb-2 block">
@@ -188,59 +182,6 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="qaz" className="space-y-4">
-                  <div>
-                    <Label htmlFor="titleQaz" className="text-base font-medium mb-2 block">
-                      Атауы (Qazaqşa)
-                    </Label>
-                    <Input
-                      id="titleQaz"
-                      value={titleQaz}
-                      onChange={(e) => setTitleQaz(e.target.value)}
-                      className="text-base p-3 h-12"
-                    />
-                  </div>
-
-                  <div>
-                    <Label className="text-base font-medium mb-2 block">Мазмұны (Qazaqşa)</Label>
-                    <Textarea
-                      value={contentQaz}
-                      onChange={(e) => setContentQaz(e.target.value)}
-                      className="min-h-[300px] text-base p-4"
-                    />
-                  </div>
-                </TabsContent>
-              </Tabs>
-
-              <div>
-                <Label className="text-base font-medium mb-2 block">Санат *</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="text-base p-3 h-12">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium mb-2 block">Күй</Label>
-                <Select value={status} onValueChange={(value: "draft" | "published" | "pending") => setStatus(value)}>
-                  <SelectTrigger className="text-base p-3 h-12">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Жоба</SelectItem>
-                    <SelectItem value="published">Жарияланған</SelectItem>
-                    <SelectItem value="pending">Жариялау күтуде</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </CardContent>
           </Card>
         </div>

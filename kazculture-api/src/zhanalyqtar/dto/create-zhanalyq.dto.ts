@@ -12,25 +12,15 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ZhanalyqStatus, ZhanalyqCategory } from '../entities/zhanalyq.entity';
 
 export class CreateZhanalyqDto {
-  @ApiProperty({ description: 'News title in Kazakh' })
+  @ApiProperty({ description: 'News title' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiPropertyOptional({ description: 'News title in Qazaq' })
-  @IsOptional()
-  @IsString()
-  titleQaz?: string;
-
-  @ApiProperty({ description: 'News content in Kazakh' })
+  @ApiProperty({ description: 'News content' })
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @ApiPropertyOptional({ description: 'News content in Qazaq' })
-  @IsOptional()
-  @IsString()
-  contentQaz?: string;
 
   @ApiPropertyOptional({ enum: ZhanalyqCategory, description: 'News category' })
   @IsOptional()
@@ -57,15 +47,10 @@ export class CreateZhanalyqDto {
   @IsDateString()
   eventDate?: string;
 
-  @ApiPropertyOptional({ description: 'Location in Kazakh' })
+  @ApiPropertyOptional({ description: 'Location' })
   @IsOptional()
   @IsString()
   locationKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Location in Qazaq' })
-  @IsOptional()
-  @IsString()
-  locationQaz?: string;
 
   @ApiPropertyOptional({ description: 'News tags' })
   @IsOptional()
@@ -73,15 +58,10 @@ export class CreateZhanalyqDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiPropertyOptional({ description: 'Meta description in Kazakh' })
+  @ApiPropertyOptional({ description: 'Meta description' })
   @IsOptional()
   @IsString()
   metaDescriptionKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Meta description in Qazaq' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionQaz?: string;
 
   @ApiPropertyOptional({ description: 'Is featured news' })
   @IsOptional()

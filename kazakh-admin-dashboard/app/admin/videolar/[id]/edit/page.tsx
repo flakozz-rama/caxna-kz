@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,6 +15,12 @@ export default function EditVideoPage({ params }: { params: { id: string } }) {
   const [description, setDescription] = useState("Видео сипаттамасы...")
   const [embedLink, setEmbedLink] = useState("https://youtube.com/watch?v=example")
   const router = useRouter()
+
+  useEffect(() => {
+    if (params.id === "admin") {
+      router.replace("/admin/videolar");
+    }
+  }, [params.id, router]);
 
   const handleSave = () => {
     router.push("/admin/videolar")

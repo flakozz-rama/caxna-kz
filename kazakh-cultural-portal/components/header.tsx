@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Search, Menu, X } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { LanguageToggle } from "./language-toggle"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -54,11 +53,6 @@ export default function Header() {
               </Button>
             </Link>
 
-            {/* Language Switcher */}
-            <div className="hidden sm:block">
-              <LanguageToggle />
-            </div>
-
             {/* Mobile menu button */}
             <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
               {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -87,7 +81,6 @@ export default function Header() {
                     Іздеу
                   </Button>
                 </Link>
-                <LanguageToggle />
               </div>
             </nav>
           </div>

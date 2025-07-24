@@ -15,9 +15,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
-  ApiQuery,
 } from '@nestjs/swagger';
-import { I18n, I18nContext } from 'nestjs-i18n';
 import { VideosService } from './videos.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
@@ -25,9 +23,8 @@ import {
   PaginationDto,
   PaginationResponseDto,
 } from '../common/dto/pagination.dto';
-import { LanguageDto } from '../common/dto/language.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Video } from './entities/video.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Videos')
 @Controller('videos')
@@ -37,40 +34,23 @@ export class VideosController {
   // Public routes
   @Get()
   @ApiOperation({ summary: 'Get all published videos' })
-  @ApiQuery({ name: 'lang', enum: ['kaz', 'qaz'], required: false })
   @ApiResponse({ status: 200, description: 'List of videos' })
   async findAll(
     @Query() paginationDto: PaginationDto,
-    @Query() languageDto: LanguageDto,
-    @I18n() i18n: I18nContext,
   ): Promise<PaginationResponseDto<Video>> {
-    return this.videosService.findAll(paginationDto, languageDto.lang);
+    return this.videosService.findAll(paginationDto);
   }
 
   @Get('featured')
   @ApiOperation({ summary: 'Get featured videos' })
-  @ApiQuery({ name: 'lang', enum: ['kaz', 'qaz'], required: false })
   @ApiResponse({ status: 200, description: 'Featured videos' })
   async getFeatured(
-    @Query() languageDto: LanguageDto,
     @Query('limit') limit?: number,
   ): Promise<Video[]> {
-    return this.videosService.getFeatured(languageDto.lang, limit);
+    return this.videosService.getFeatured(limit);
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get video by ID' })
-  @ApiQuery({ name: 'lang', enum: ['kaz', 'qaz'], required: false })
-  @ApiResponse({ status: 200, description: 'Video details' })
-  @ApiResponse({ status: 404, description: 'Video not found' })
-  async findById(
-    @Param('id') id: string,
-    @Query() languageDto: LanguageDto,
-  ): Promise<Video> {
-    return this.videosService.findById(id, languageDto.lang);
-  }
-
-  // Admin routes (protected)
+  // --- ADMIN ROUTES ---
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Post('admin')
@@ -94,7 +74,7 @@ export class VideosController {
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<Video>> {
-    return this.videosService.findAll(paginationDto, 'kaz', status as any);
+    return this.videosService.findAll(paginationDto, status as any);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -128,5 +108,16 @@ export class VideosController {
   @ApiResponse({ status: 404, description: 'Video not found' })
   async remove(@Param('id') id: string): Promise<void> {
     return this.videosService.remove(id);
+  }
+
+  // --- Только после admin-ручек ---
+  @Get(':id')
+  @ApiOperation({ summary: 'Get video by ID' })
+  @ApiResponse({ status: 200, description: 'Video details' })
+  @ApiResponse({ status: 404, description: 'Video not found' })
+  async findById(
+    @Param('id') id: string,
+  ): Promise<Video> {
+    return this.videosService.findById(id);
   }
 }

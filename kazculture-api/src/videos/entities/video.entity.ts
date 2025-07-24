@@ -24,14 +24,8 @@ export class Video extends BaseEntity {
   @Column({ name: 'title', length: 500 })
   title: string;
 
-  @Column({ name: 'title_qaz', length: 500, nullable: true })
-  titleQaz: string;
-
   @Column({ name: 'description', type: 'text', nullable: true })
   description: string;
-
-  @Column({ name: 'description_qaz', type: 'text', nullable: true })
-  descriptionQaz: string;
 
   @Column({ length: 10, nullable: true }) // Format: "15:30"
   duration: string;
@@ -67,10 +61,4 @@ export class Video extends BaseEntity {
 
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
-
-  @Column({ name: 'meta_description_kaz', length: 500, nullable: true })
-  metaDescriptionKaz: string;
-
-  @Column({ name: 'meta_description_qaz', length: 500, nullable: true })
-  metaDescriptionQaz: string;
 }

@@ -1,16 +1,20 @@
+"use client"
+
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Eye, Calendar, User, Play } from "lucide-react"
-import { getVideos } from "@/lib/api"
+import { useVideos } from "@/lib/api"
 
-export default async function VideosPage() {
-  let videos: any[] = [];
-  try {
-    videos = await getVideos();
-  } catch (e) {
-    // Можно добавить обработку ошибки
+export default function VideosPage() {
+  const { data: videos, isLoading, error } = useVideos();
+
+  if (isLoading) {
+    return <div className="p-6">Жүктелуде...</div>;
+  }
+  if (error) {
+    return <div className="p-6 text-red-600">Қате: {error.message || "Видеоларды жүктеу кезінде қате орын алды"}</div>;
   }
 
   return (
@@ -27,8 +31,7 @@ export default async function VideosPage() {
           </Button>
         </Link>
       </div>
-
-      {videos.length === 0 ? (
+      {!videos || videos.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">Видеолар табылмады</p>
           <Link href="/admin/videolar/new">
@@ -39,39 +42,24 @@ export default async function VideosPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {videos.map((video) => (
             <Card key={video.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{video.title}</h3>
-                      <Badge
-                        variant={video.status === "published" ? "default" : "secondary"}
-                        className="text-xs"
-                      >
-                        {video.status === "published" ? "Жарияланған" : 
-                         video.status === "draft" ? "Жоба" : "Жариялау күтуде"}
-                      </Badge>
+                <div className="flex flex-col gap-2">
+                  <div className="font-bold text-lg text-gray-900">{video.title}</div>
+                  <div className="flex items-center gap-6 text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <User className="w-4 h-4 mr-1" />
+                      {video.author || "Автор"}
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <User className="w-4 h-4 mr-1" />
-                        {video.author || "Автор"}
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {video.createdAt ? new Date(video.createdAt).toLocaleDateString() : ""}
-                      </div>
-                      <div className="flex items-center">
-                        <Eye className="w-4 h-4 mr-1" />
-                        {video.views || 0} көрініс
-                      </div>
-                      <div className="flex items-center">
-                        <Play className="w-4 h-4 mr-1" />
-                        {video.duration || "00:00"}
-                      </div>
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {video.createdAt ? new Date(video.createdAt).toLocaleDateString() : ""}
+                    </div>
+                    <div className="flex items-center">
+                      <Eye className="w-4 h-4 mr-1" />
+                      {video.views || 0} көрініс
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -79,12 +67,6 @@ export default async function VideosPage() {
                       <Button variant="outline" size="sm">
                         <Edit className="w-4 h-4 mr-1" />
                         Өңдеу
-                      </Button>
-                    </Link>
-                    <Link href={`/video/${video.id}`} target="_blank">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4 mr-1" />
-                        Көру
                       </Button>
                     </Link>
                   </div>

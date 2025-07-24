@@ -50,15 +50,11 @@ export class ArnaiyZhobalarService {
 
   async findAll(
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
     status?: ArnaiyZhobalaStatus,
   ): Promise<PaginationResponseDto<ArnaiyZhobala>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const queryBuilder =
-      this.arnaiyZhobalaRepository.createQueryBuilder('arnaiyZhobala');
-
+    const queryBuilder = this.arnaiyZhobalaRepository.createQueryBuilder('arnaiyZhobala');
     if (status) {
       queryBuilder.where('arnaiyZhobala.status = :status', { status });
     } else {
@@ -66,13 +62,11 @@ export class ArnaiyZhobalarService {
         status: ArnaiyZhobalaStatus.PUBLISHED,
       });
     }
-
     const [arnaiyZhobalar, total] = await queryBuilder
       .orderBy('arnaiyZhobala.eventDate', 'ASC')
       .skip(skip)
       .take(limit)
       .getManyAndCount();
-
     return {
       data: arnaiyZhobalar,
       total,
@@ -84,37 +78,21 @@ export class ArnaiyZhobalarService {
     };
   }
 
-  async findOne(
-    id: string,
-    lang: 'kaz' | 'qaz' = 'kaz',
-  ): Promise<ArnaiyZhobala> {
-    const arnaiyZhobala = await this.arnaiyZhobalaRepository.findOne({
-      where: { id },
-    });
+  async findOne(id: string): Promise<ArnaiyZhobala> {
+    const arnaiyZhobala = await this.arnaiyZhobalaRepository.findOne({ where: { id } });
     if (!arnaiyZhobala) {
       throw new NotFoundException('Event not found');
     }
     return arnaiyZhobala;
   }
 
-  async findBySlug(
-    slug: string,
-    lang: 'kaz' | 'qaz' = 'kaz',
-  ): Promise<ArnaiyZhobala> {
-    const arnaiyZhobala = await this.arnaiyZhobalaRepository.findOne({
-      where: { slug },
-    });
-    if (
-      !arnaiyZhobala ||
-      arnaiyZhobala.status !== ArnaiyZhobalaStatus.PUBLISHED
-    ) {
+  async findBySlug(slug: string): Promise<ArnaiyZhobala> {
+    const arnaiyZhobala = await this.arnaiyZhobalaRepository.findOne({ where: { slug } });
+    if (!arnaiyZhobala || arnaiyZhobala.status !== ArnaiyZhobalaStatus.PUBLISHED) {
       throw new NotFoundException('Event not found');
     }
-
-    // Increment views
     arnaiyZhobala.views += 1;
     await this.arnaiyZhobalaRepository.save(arnaiyZhobala);
-
     return arnaiyZhobala;
   }
 
@@ -148,32 +126,19 @@ export class ArnaiyZhobalarService {
   async search(
     query: string,
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
   ): Promise<PaginationResponseDto<ArnaiyZhobala>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const titleField = lang === 'kaz' ? 'title' : 'titleQaz';
-    const contentField = lang === 'kaz' ? 'content' : 'contentQaz';
-
-    const [arnaiyZhobalar, total] =
-      await this.arnaiyZhobalaRepository.findAndCount({
-        where: [
-          {
-            [titleField]: ILike(`%${query}%`),
-            status: ArnaiyZhobalaStatus.PUBLISHED,
-          },
-          {
-            [contentField]: ILike(`%${query}%`),
-            status: ArnaiyZhobalaStatus.PUBLISHED,
-          },
-          { tags: Like(`%${query}%`), status: ArnaiyZhobalaStatus.PUBLISHED },
-        ],
-        order: { eventDate: 'ASC' },
-        skip,
-        take: limit,
-      });
-
+    const [arnaiyZhobalar, total] = await this.arnaiyZhobalaRepository.findAndCount({
+      where: [
+        { title: ILike(`%${query}%`), status: ArnaiyZhobalaStatus.PUBLISHED },
+        { content: ILike(`%${query}%`), status: ArnaiyZhobalaStatus.PUBLISHED },
+        { tags: Like(`%${query}%`), status: ArnaiyZhobalaStatus.PUBLISHED },
+      ],
+      order: { eventDate: 'ASC' },
+      skip,
+      take: limit,
+    });
     return {
       data: arnaiyZhobalar,
       total,
@@ -185,14 +150,15 @@ export class ArnaiyZhobalarService {
     };
   }
 
-  async getFeatured(
-    lang: 'kaz' | 'qaz' = 'kaz',
-    limit: number = 6,
-  ): Promise<ArnaiyZhobala[]> {
-    return this.arnaiyZhobalaRepository.find({
-      where: { status: ArnaiyZhobalaStatus.PUBLISHED, isFeatured: true },
-      order: { eventDate: 'ASC' },
-      take: limit,
+  async getFeatured(limit?: number): Promise<ArnaiyZhobala[]> {
+    const queryBuilder = this.arnaiyZhobalaRepository.createQueryBuilder('arnaiyZhobala');
+    queryBuilder.where('arnaiyZhobala.status = :status', {
+      status: ArnaiyZhobalaStatus.PUBLISHED,
     });
+    queryBuilder.orderBy('arnaiyZhobala.eventDate', 'ASC');
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+    return queryBuilder.getMany();
   }
 }

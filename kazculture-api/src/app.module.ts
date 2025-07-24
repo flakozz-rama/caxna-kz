@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { I18nModule } from 'nestjs-i18n';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
 // Configuration
 import configuration from './config/configuration';
-import { i18nConfig } from './i18n/i18n.config';
 
 // Entities
 import { User } from './users/entities/user.entity';
@@ -51,9 +49,6 @@ import { UploadsModule } from './uploads/uploads.module';
       }),
       inject: [ConfigService],
     }),
-
-    // Internationalization
-    I18nModule.forRoot(i18nConfig),
 
     // Static files
     ServeStaticModule.forRoot({

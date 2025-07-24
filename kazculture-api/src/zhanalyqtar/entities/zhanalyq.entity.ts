@@ -27,14 +27,8 @@ export class Zhanalyq extends BaseEntity {
   @Column({ name: 'title', length: 500 })
   title: string;
 
-  @Column({ name: 'title_qaz', length: 500, nullable: true })
-  titleQaz: string;
-
   @Column({ name: 'content', type: 'text' })
   content: string;
-
-  @Column({ name: 'content_qaz', type: 'text', nullable: true })
-  contentQaz: string;
 
   @Column({
     type: 'enum',
@@ -65,23 +59,11 @@ export class Zhanalyq extends BaseEntity {
   @Column({ name: 'event_date', nullable: true })
   eventDate: Date;
 
-  @Column({ name: 'location_kaz', length: 200, nullable: true })
-  locationKaz: string;
-
-  @Column({ name: 'location_qaz', length: 200, nullable: true })
-  locationQaz: string;
-
   @Column({ name: 'author_id', nullable: true })
   authorId: string;
 
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
-
-  @Column({ name: 'meta_description_kaz', length: 500, nullable: true })
-  metaDescriptionKaz: string;
-
-  @Column({ name: 'meta_description_qaz', length: 500, nullable: true })
-  metaDescriptionQaz: string;
 
   @Column({ default: false })
   isFeatured: boolean;

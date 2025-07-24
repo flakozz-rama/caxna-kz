@@ -45,14 +45,11 @@ export class ArticlesService {
 
   async findAll(
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
     status?: ArticleStatus,
   ): Promise<PaginationResponseDto<Article>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
     const queryBuilder = this.articleRepository.createQueryBuilder('article');
-
     if (status) {
       queryBuilder.where('article.status = :status', { status });
     } else {
@@ -60,13 +57,11 @@ export class ArticlesService {
         status: ArticleStatus.PUBLISHED,
       });
     }
-
     const [articles, total] = await queryBuilder
       .orderBy('article.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
       .getManyAndCount();
-
     return {
       data: articles,
       total,
@@ -78,7 +73,7 @@ export class ArticlesService {
     };
   }
 
-  async findOne(id: string, lang: 'kaz' | 'qaz' = 'kaz'): Promise<Article> {
+  async findOne(id: string): Promise<Article> {
     const article = await this.articleRepository.findOne({ where: { id } });
     if (!article) {
       throw new NotFoundException('Article not found');
@@ -86,19 +81,13 @@ export class ArticlesService {
     return article;
   }
 
-  async findBySlug(
-    slug: string,
-    lang: 'kaz' | 'qaz' = 'kaz',
-  ): Promise<Article> {
+  async findBySlug(slug: string): Promise<Article> {
     const article = await this.articleRepository.findOne({ where: { slug } });
     if (!article || article.status !== ArticleStatus.PUBLISHED) {
       throw new NotFoundException('Article not found');
     }
-
-    // Increment views
     article.views += 1;
     await this.articleRepository.save(article);
-
     return article;
   }
 
@@ -132,28 +121,19 @@ export class ArticlesService {
   async search(
     query: string,
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
   ): Promise<PaginationResponseDto<Article>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const titleField = lang === 'kaz' ? 'title' : 'titleQaz';
-    const contentField = lang === 'kaz' ? 'content' : 'contentQaz';
-
     const [articles, total] = await this.articleRepository.findAndCount({
       where: [
-        { [titleField]: ILike(`%${query}%`), status: ArticleStatus.PUBLISHED },
-        {
-          [contentField]: ILike(`%${query}%`),
-          status: ArticleStatus.PUBLISHED,
-        },
+        { title: ILike(`%${query}%`), status: ArticleStatus.PUBLISHED },
+        { content: ILike(`%${query}%`), status: ArticleStatus.PUBLISHED },
         { tags: Like(`%${query}%`), status: ArticleStatus.PUBLISHED },
       ],
       order: { createdAt: 'DESC' },
       skip,
       take: limit,
     });
-
     return {
       data: articles,
       total,
@@ -165,14 +145,15 @@ export class ArticlesService {
     };
   }
 
-  async getFeatured(
-    lang: 'kaz' | 'qaz' = 'kaz',
-    limit: number = 6,
-  ): Promise<Article[]> {
-    return this.articleRepository.find({
-      where: { status: ArticleStatus.PUBLISHED },
-      order: { views: 'DESC', createdAt: 'DESC' },
-      take: limit,
+  async getFeatured(limit?: number): Promise<Article[]> {
+    const queryBuilder = this.articleRepository.createQueryBuilder('article');
+    queryBuilder.where('article.status = :status', {
+      status: ArticleStatus.PUBLISHED,
     });
+    queryBuilder.orderBy('article.createdAt', 'DESC');
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+    return queryBuilder.getMany();
   }
 }

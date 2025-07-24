@@ -37,9 +37,7 @@ const statusOptions = [
 
 function NewArticleForm() {
   const [title, setTitle] = useState("")
-  const [titleQaz, setTitleQaz] = useState("")
   const [content, setContent] = useState("")
-  const [contentQaz, setContentQaz] = useState("")
   const [category, setCategory] = useState("")
   const [status, setStatus] = useState<"draft" | "published" | "pending">("draft")
   const [imageUrl, setImageUrl] = useState("")
@@ -80,9 +78,7 @@ function NewArticleForm() {
 
     const articleData = {
       title,
-      titleQaz: titleQaz || undefined,
       content,
-      contentQaz: contentQaz || undefined,
       category: category || undefined,
       status,
       imageUrl: imageUrl || undefined,
@@ -197,23 +193,23 @@ function NewArticleForm() {
                     </Label>
                     <Input
                       id="titleQaz"
-                      value={titleQaz}
-                      onChange={(e) => setTitleQaz(e.target.value)}
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
                       placeholder="Мақала атауын енгізіңіз"
                       className="text-base p-3 h-12"
                     />
-                    <ValidationError error={getFieldError('titleQaz')} />
+                    <ValidationError error={getFieldError('title')} />
                   </div>
 
                   <div>
                     <Label className="text-base font-medium mb-2 block">Мазмұны (Qazaqşa)</Label>
                     <Textarea
-                      value={contentQaz}
-                      onChange={(e) => setContentQaz(e.target.value)}
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
                       placeholder="Мақала мазмұнын жазыңыз..."
                       className="min-h-[300px] text-base p-4"
                     />
-                    <ValidationError error={getFieldError('contentQaz')} />
+                    <ValidationError error={getFieldError('content')} />
                   </div>
                 </TabsContent>
               </Tabs>

@@ -61,9 +61,7 @@ export interface PaginatedResponse<T = any> {
 export interface Article {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   author?: string;
   category?: string;
@@ -77,9 +75,7 @@ export interface Article {
 export interface News {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   author?: string;
   status: 'draft' | 'published' | 'pending';
@@ -92,9 +88,7 @@ export interface News {
 export interface Video {
   id: string;
   title: string;
-  titleQaz?: string;
   description?: string;
-  descriptionQaz?: string;
   url?: string;
   duration?: string;
   author?: string;
@@ -108,9 +102,7 @@ export interface Video {
 export interface Interview {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   interviewee?: string;
   author?: string;
@@ -123,20 +115,17 @@ export interface Interview {
 
 export interface User {
   id: string;
+  name: string;
   email: string;
-  name?: string;
-  role: 'admin' | 'user';
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  role: string;
+  lastLoginAt?: string;
+  isActive?: boolean;
 }
 
 export interface SpecialProject {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   author?: string;
   status: 'draft' | 'published' | 'pending';
@@ -147,7 +136,8 @@ export interface SpecialProject {
 }
 
 export interface LoginResponse {
-  access_token: string;
+  access_token?: string;
+  accessToken?: string;
   user: User;
 }
 

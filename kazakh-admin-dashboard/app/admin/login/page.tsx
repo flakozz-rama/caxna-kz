@@ -46,8 +46,9 @@ function LoginForm() {
       const response = await authApi.login(email, password)
       
       // Сохраняем токен в localStorage только на клиенте
-      if (response.access_token && typeof window !== 'undefined') {
-        localStorage.setItem('admin_token', response.access_token)
+      const token = response.access_token || response.accessToken;
+      if (token && typeof window !== 'undefined') {
+        localStorage.setItem('admin_token', token)
         router.push("/admin")
       } else {
         setServerError("Кіру сәтсіз болды")

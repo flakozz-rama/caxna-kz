@@ -11,35 +11,8 @@ export const axiosInstance = axios.create({
   },
 });
 
-// Request interceptor для добавления языка
-axiosInstance.interceptors.request.use(
-  (config) => {
-    // Получаем язык из localStorage или используем по умолчанию
-    const lang = localStorage.getItem('language') || 'kaz';
-    if (config.params) {
-      config.params.lang = lang;
-    } else {
-      config.params = { lang };
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor для обработки ошибок
-axiosInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    // Логируем ошибку для отладки
-    console.error('API Error:', error.response?.data || error.message);
-    
-    return Promise.reject(error);
-  }
-);
+// Удалить интерцептор, который добавляет lang к каждому запросу
+// Удалить все поля типа titleQaz, contentQaz, descriptionQaz и т.д. из Article, News, Video, Interview, SpecialProject
 
 // Типы для API ответов
 export interface ApiResponse<T = any> {
@@ -60,9 +33,7 @@ export interface PaginatedResponse<T = any> {
 export interface Article {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   author?: string;
   category?: string;
@@ -76,9 +47,7 @@ export interface Article {
 export interface News {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   author?: string;
   status: 'draft' | 'published' | 'pending';
@@ -91,9 +60,7 @@ export interface News {
 export interface Video {
   id: string;
   title: string;
-  titleQaz?: string;
   description?: string;
-  descriptionQaz?: string;
   url?: string;
   duration?: string;
   author?: string;
@@ -107,9 +74,7 @@ export interface Video {
 export interface Interview {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   interviewee?: string;
   author?: string;
@@ -123,9 +88,7 @@ export interface Interview {
 export interface SpecialProject {
   id: string;
   title: string;
-  titleQaz?: string;
   content: string;
-  contentQaz?: string;
   slug?: string;
   author?: string;
   status: 'draft' | 'published' | 'pending';

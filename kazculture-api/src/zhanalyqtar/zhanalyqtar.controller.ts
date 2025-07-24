@@ -17,7 +17,6 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { I18n, I18nContext } from 'nestjs-i18n';
 import { ZhanalyqtarService } from './zhanalyqtar.service';
 import { CreateZhanalyqDto } from './dto/create-zhanalyq.dto';
 import { UpdateZhanalyqDto } from './dto/update-zhanalyq.dto';
@@ -25,9 +24,8 @@ import {
   PaginationDto,
   PaginationResponseDto,
 } from '../common/dto/pagination.dto';
-import { LanguageDto } from '../common/dto/language.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Zhanalyq } from './entities/zhanalyq.entity';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Zhanalyqtar')
 @Controller('zhanalyqtar')
@@ -37,40 +35,32 @@ export class ZhanalyqtarController {
   // Public routes
   @Get()
   @ApiOperation({ summary: 'Get all published news' })
-  @ApiQuery({ name: 'lang', enum: ['kaz', 'qaz'], required: false })
   @ApiResponse({ status: 200, description: 'List of news' })
   async findAll(
     @Query() paginationDto: PaginationDto,
-    @Query() languageDto: LanguageDto,
-    @I18n() i18n: I18nContext,
   ): Promise<PaginationResponseDto<Zhanalyq>> {
-    return this.zhanalyqtarService.findAll(paginationDto, languageDto.lang);
+    return this.zhanalyqtarService.findAll(paginationDto);
   }
 
   @Get('featured')
   @ApiOperation({ summary: 'Get featured news' })
-  @ApiQuery({ name: 'lang', enum: ['kaz', 'qaz'], required: false })
   @ApiResponse({ status: 200, description: 'Featured news' })
   async getFeatured(
-    @Query() languageDto: LanguageDto,
     @Query('limit') limit?: number,
   ): Promise<Zhanalyq[]> {
-    return this.zhanalyqtarService.getFeatured(languageDto.lang, limit);
+    return this.zhanalyqtarService.getFeatured(limit);
   }
 
-  @Get(':slug')
-  @ApiOperation({ summary: 'Get news by slug' })
-  @ApiQuery({ name: 'lang', enum: ['kaz', 'qaz'], required: false })
+  // Публичный роут для поиска по id (если slug не задан)
+  @Get('id/:id')
+  @ApiOperation({ summary: 'Get news by id (public)' })
   @ApiResponse({ status: 200, description: 'News details' })
   @ApiResponse({ status: 404, description: 'News not found' })
-  async findBySlug(
-    @Param('slug') slug: string,
-    @Query() languageDto: LanguageDto,
-  ): Promise<Zhanalyq> {
-    return this.zhanalyqtarService.findBySlug(slug, languageDto.lang);
+  async findByIdPublic(@Param('id') id: string): Promise<Zhanalyq> {
+    return this.zhanalyqtarService.findOne(id);
   }
 
-  // Admin routes (protected)
+  // --- ADMIN ROUTES ---
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Post('admin')
@@ -94,7 +84,7 @@ export class ZhanalyqtarController {
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<Zhanalyq>> {
-    return this.zhanalyqtarService.findAll(paginationDto, 'kaz', status as any);
+    return this.zhanalyqtarService.findAll(paginationDto, status as any);
   }
 
   @UseGuards(JwtAuthGuard)
@@ -128,5 +118,16 @@ export class ZhanalyqtarController {
   @ApiResponse({ status: 404, description: 'News not found' })
   async remove(@Param('id') id: string): Promise<void> {
     return this.zhanalyqtarService.remove(id);
+  }
+
+  // --- Только после admin-ручек ---
+  @Get(':slug')
+  @ApiOperation({ summary: 'Get news by slug' })
+  @ApiResponse({ status: 200, description: 'News details' })
+  @ApiResponse({ status: 404, description: 'News not found' })
+  async findBySlug(
+    @Param('slug') slug: string,
+  ): Promise<Zhanalyq> {
+    return this.zhanalyqtarService.findBySlug(slug);
   }
 }

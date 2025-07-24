@@ -10,25 +10,15 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { VideoCategory, VideoStatus } from '../entities/video.entity';
 
 export class CreateVideoDto {
-  @ApiProperty({ description: 'Video title in Kazakh' })
+  @ApiProperty({ description: 'Video title' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiPropertyOptional({ description: 'Video title in Qazaq' })
-  @IsOptional()
-  @IsString()
-  titleQaz?: string;
-
-  @ApiPropertyOptional({ description: 'Video description in Kazakh' })
+  @ApiPropertyOptional({ description: 'Video description' })
   @IsOptional()
   @IsString()
   description?: string;
-
-  @ApiPropertyOptional({ description: 'Video description in Qazaq' })
-  @IsOptional()
-  @IsString()
-  descriptionQaz?: string;
 
   @ApiPropertyOptional({ description: 'Video duration (format: MM:SS)' })
   @IsOptional()
@@ -60,13 +50,8 @@ export class CreateVideoDto {
   @IsString({ each: true })
   tags?: string[];
 
-  @ApiPropertyOptional({ description: 'Meta description in Kazakh' })
+  @ApiPropertyOptional({ description: 'Meta description' })
   @IsOptional()
   @IsString()
   metaDescriptionKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Meta description in Qazaq' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionQaz?: string;
 }

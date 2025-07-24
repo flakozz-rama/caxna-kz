@@ -1,16 +1,20 @@
+"use client"
+
 import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Eye, Calendar, User } from "lucide-react"
-import { getInterviews } from "@/lib/api"
+import { useInterviews } from "@/lib/api"
 
-export default async function InterviewsPage() {
-  let interviews: any[] = [];
-  try {
-    interviews = await getInterviews();
-  } catch (e) {
-    // Можно добавить обработку ошибки
+export default function InterviewsPage() {
+  const { data: interviews, isLoading, error } = useInterviews();
+
+  if (isLoading) {
+    return <div className="p-6">Жүктелуде...</div>;
+  }
+  if (error) {
+    return <div className="p-6 text-red-600">Қате: {error.message || "Сұқбаттарды жүктеу кезінде қате орын алды"}</div>;
   }
 
   return (
@@ -27,8 +31,7 @@ export default async function InterviewsPage() {
           </Button>
         </Link>
       </div>
-
-      {interviews.length === 0 ? (
+      {!interviews || interviews.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 mb-4">Сұқбаттар табылмады</p>
           <Link href="/admin/suqbattar/new">
@@ -39,48 +42,31 @@ export default async function InterviewsPage() {
           </Link>
         </div>
       ) : (
-        <div className="space-y-4">
-          {interviews.map((interview) => (
-            <Card key={interview.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {interviews.map((item) => (
+            <Card key={item.id} className="border-0 shadow-sm hover:shadow-md transition-shadow">
               <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-4 mb-2">
-                      <h3 className="text-lg font-semibold text-gray-900">{interview.title}</h3>
-                      <Badge
-                        variant={interview.status === "published" ? "default" : "secondary"}
-                        className="text-xs"
-                      >
-                        {interview.status === "published" ? "Жарияланған" : 
-                         interview.status === "draft" ? "Жоба" : "Жариялау күтуде"}
-                      </Badge>
+                <div className="flex flex-col gap-2">
+                  <div className="font-bold text-lg text-gray-900">{item.title}</div>
+                  <div className="flex items-center gap-6 text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <User className="w-4 h-4 mr-1" />
+                      {item.author || "Автор"}
                     </div>
-                    <div className="flex items-center gap-6 text-sm text-gray-500">
-                      <div className="flex items-center">
-                        <User className="w-4 h-4 mr-1" />
-                        {interview.interviewee || interview.author || "Сұқбаттасушы"}
-                      </div>
-                      <div className="flex items-center">
-                        <Calendar className="w-4 h-4 mr-1" />
-                        {interview.createdAt ? new Date(interview.createdAt).toLocaleDateString() : ""}
-                      </div>
-                      <div className="flex items-center">
-                        <Eye className="w-4 h-4 mr-1" />
-                        {interview.views || 0} көрініс
-                      </div>
+                    <div className="flex items-center">
+                      <Calendar className="w-4 h-4 mr-1" />
+                      {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}
+                    </div>
+                    <div className="flex items-center">
+                      <Eye className="w-4 h-4 mr-1" />
+                      {item.views || 0} көрініс
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Link href={`/admin/suqbattar/${interview.id}/edit`}>
+                    <Link href={`/admin/suqbattar/${item.id}/edit`}>
                       <Button variant="outline" size="sm">
                         <Edit className="w-4 h-4 mr-1" />
                         Өңдеу
-                      </Button>
-                    </Link>
-                    <Link href={`/suqbat/${interview.slug || interview.id}`} target="_blank">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4 mr-1" />
-                        Көру
                       </Button>
                     </Link>
                   </div>

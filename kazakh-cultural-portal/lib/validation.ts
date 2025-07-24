@@ -10,7 +10,6 @@ export const filterSchema = z.object({
   category: z.enum(['all', 'articles', 'news', 'videos', 'interviews', 'projects']).optional(),
   dateFrom: z.string().optional(),
   dateTo: z.string().optional(),
-  language: z.enum(['kaz', 'qaz']).optional(),
 });
 
 // Схема валидации для контактной формы
@@ -24,7 +23,6 @@ export const contactSchema = z.object({
 // Схема валидации для подписки на новости
 export const newsletterSchema = z.object({
   email: z.string().email('Неверный формат email'),
-  language: z.enum(['kaz', 'qaz']).optional(),
 });
 
 // Типы для TypeScript

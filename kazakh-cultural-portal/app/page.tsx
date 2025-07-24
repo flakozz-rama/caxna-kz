@@ -14,25 +14,6 @@ export default function HomePage() {
   const { data: interviews, isLoading: interviewsLoading } = useInterviews()
   const { data: projects, isLoading: projectsLoading } = useSpecialProjects()
 
-  // Получаем текущий язык
-  const currentLang = typeof window !== 'undefined' ? localStorage.getItem('language') || 'kaz' : 'kaz'
-
-  // Функция для получения правильного заголовка в зависимости от языка
-  const getLocalizedTitle = (item: any) => {
-    if (currentLang === 'qaz' && item.titleQaz) {
-      return item.titleQaz
-    }
-    return item.title
-  }
-
-  // Функция для получения правильного контента в зависимости от языка
-  const getLocalizedContent = (item: any) => {
-    if (currentLang === 'qaz' && item.contentQaz) {
-      return item.contentQaz
-    }
-    return item.content
-  }
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('kk-KZ', {
       year: 'numeric',
@@ -105,7 +86,7 @@ export default function HomePage() {
                     <div className="aspect-video overflow-hidden rounded-t-lg">
                       <img
                         src={article.imageUrl}
-                        alt={getLocalizedTitle(article)}
+                        alt={article.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -122,10 +103,10 @@ export default function HomePage() {
                       </Badge>
                     </div>
                     <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                      {getLocalizedTitle(article)}
+                      {article.title}
                     </h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {truncateText(getLocalizedContent(article), 150)}
+                      {truncateText(article.content, 150)}
                     </p>
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <div className="flex items-center">
@@ -188,17 +169,17 @@ export default function HomePage() {
                     <div className="aspect-video overflow-hidden rounded-t-lg">
                       <img
                         src={item.imageUrl}
-                        alt={getLocalizedTitle(item)}
+                        alt={item.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
                   )}
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                      {getLocalizedTitle(item)}
+                      {item.title}
                     </h3>
                     <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {truncateText(getLocalizedContent(item), 120)}
+                      {truncateText(item.content, 120)}
                     </p>
                     <div className="flex items-center justify-between text-sm text-gray-500">
                       <div className="flex items-center">
@@ -261,7 +242,7 @@ export default function HomePage() {
                     <div className="aspect-video overflow-hidden rounded-t-lg relative">
                       <img
                         src={video.thumbnailUrl}
-                        alt={getLocalizedTitle(video)}
+                        alt={video.title}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 flex items-center justify-center">
@@ -273,7 +254,7 @@ export default function HomePage() {
                   )}
                   <CardContent className="p-6">
                     <h3 className="text-lg font-semibold mb-2 line-clamp-2">
-                      {getLocalizedTitle(video)}
+                      {video.title}
                     </h3>
                     {video.description && (
                       <p className="text-gray-600 text-sm mb-4 line-clamp-2">
@@ -341,7 +322,7 @@ export default function HomePage() {
                     <div className="aspect-video overflow-hidden rounded-t-lg">
                       <img
                         src={project.imageUrl}
-                        alt={getLocalizedTitle(project)}
+                        alt={project.title}
                         className="w-full h-full object-cover"
                       />
                     </div>
@@ -354,10 +335,10 @@ export default function HomePage() {
                       </Badge>
                     </div>
                     <h3 className="text-xl font-semibold mb-3">
-                      {getLocalizedTitle(project)}
+                      {project.title}
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-3">
-                      {truncateText(getLocalizedContent(project), 200)}
+                      {truncateText(project.content, 200)}
                     </p>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center text-sm text-gray-500">

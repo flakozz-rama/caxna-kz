@@ -10,25 +10,15 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { ArticleCategory, ArticleStatus } from '../entities/article.entity';
 
 export class CreateArticleDto {
-  @ApiProperty({ description: 'Article title in Kazakh' })
+  @ApiProperty({ description: 'Article title' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiPropertyOptional({ description: 'Article title in Qazaq' })
-  @IsOptional()
-  @IsString()
-  titleQaz?: string;
-
-  @ApiProperty({ description: 'Article content in Kazakh' })
+  @ApiProperty({ description: 'Article content' })
   @IsString()
   @IsNotEmpty()
   content: string;
-
-  @ApiPropertyOptional({ description: 'Article content in Qazaq' })
-  @IsOptional()
-  @IsString()
-  contentQaz?: string;
 
   @ApiPropertyOptional({ description: 'Article tags' })
   @IsOptional()
@@ -59,13 +49,8 @@ export class CreateArticleDto {
   @IsEnum(ArticleStatus)
   status?: ArticleStatus;
 
-  @ApiPropertyOptional({ description: 'Meta description in Kazakh' })
+  @ApiPropertyOptional({ description: 'Meta description' })
   @IsOptional()
   @IsString()
   metaDescriptionKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Meta description in Qazaq' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionQaz?: string;
 }

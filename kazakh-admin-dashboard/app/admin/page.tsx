@@ -80,11 +80,51 @@ export default function AdminDashboard() {
 
       <Card className="border-0 shadow-sm">
         <CardHeader>
-          <CardTitle className="text-xl font-bold text-gray-900">Жуықтағы белсенділік</CardTitle>
+          <CardTitle className="text-xl font-bold text-gray-900">Жалпы статистика</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-12 text-gray-500">
-            <p>Жуықтағы белсенділік мәліметтері жүктелуде...</p>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead>
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Секция</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Саны</th>
+                  <th className="px-6 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-blue-500" /> Мақалалар</td>
+                  <td className="p-4 font-bold">{stats?.articlesCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/maqalalar" className="text-blue-600 hover:underline">Өту</a></td>
+                </tr>
+                <tr>
+                  <td className="p-4 flex items-center gap-2"><Video className="w-5 h-5 text-green-500" /> Видеолар</td>
+                  <td className="p-4 font-bold">{stats?.videosCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/videolar" className="text-blue-600 hover:underline">Өту</a></td>
+                </tr>
+                <tr>
+                  <td className="p-4 flex items-center gap-2"><MessageCircle className="w-5 h-5 text-purple-500" /> Сұқбаттар</td>
+                  <td className="p-4 font-bold">{stats?.interviewsCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/suqbattar" className="text-blue-600 hover:underline">Өту</a></td>
+                </tr>
+                <tr>
+                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-yellow-500" /> Жаңалықтар</td>
+                  <td className="p-4 font-bold">{stats?.newsCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/zhanalyqtar" className="text-blue-600 hover:underline">Өту</a></td>
+                </tr>
+                <tr>
+                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-pink-500" /> Арнайы жобалар</td>
+                  <td className="p-4 font-bold">{stats?.projectsCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/arnaiy-zhobalar" className="text-blue-600 hover:underline">Өту</a></td>
+                </tr>
+                <tr>
+                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-gray-500" /> Пайдаланушылар</td>
+                  <td className="p-4 font-bold">{stats?.usersCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/paidalanushylar" className="text-blue-600 hover:underline">Өту</a></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </CardContent>
       </Card>

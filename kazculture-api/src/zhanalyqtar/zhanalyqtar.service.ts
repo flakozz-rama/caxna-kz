@@ -47,14 +47,11 @@ export class ZhanalyqtarService {
 
   async findAll(
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
     status?: ZhanalyqStatus,
   ): Promise<PaginationResponseDto<Zhanalyq>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
     const queryBuilder = this.zhanalyqRepository.createQueryBuilder('zhanalyq');
-
     if (status) {
       queryBuilder.where('zhanalyq.status = :status', { status });
     } else {
@@ -62,13 +59,11 @@ export class ZhanalyqtarService {
         status: ZhanalyqStatus.PUBLISHED,
       });
     }
-
     const [zhanalyqtar, total] = await queryBuilder
       .orderBy('zhanalyq.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
       .getManyAndCount();
-
     return {
       data: zhanalyqtar,
       total,
@@ -80,7 +75,7 @@ export class ZhanalyqtarService {
     };
   }
 
-  async findOne(id: string, lang: 'kaz' | 'qaz' = 'kaz'): Promise<Zhanalyq> {
+  async findOne(id: string): Promise<Zhanalyq> {
     const zhanalyq = await this.zhanalyqRepository.findOne({ where: { id } });
     if (!zhanalyq) {
       throw new NotFoundException('News not found');
@@ -88,19 +83,13 @@ export class ZhanalyqtarService {
     return zhanalyq;
   }
 
-  async findBySlug(
-    slug: string,
-    lang: 'kaz' | 'qaz' = 'kaz',
-  ): Promise<Zhanalyq> {
+  async findBySlug(slug: string): Promise<Zhanalyq> {
     const zhanalyq = await this.zhanalyqRepository.findOne({ where: { slug } });
     if (!zhanalyq || zhanalyq.status !== ZhanalyqStatus.PUBLISHED) {
       throw new NotFoundException('News not found');
     }
-
-    // Increment views
     zhanalyq.views += 1;
     await this.zhanalyqRepository.save(zhanalyq);
-
     return zhanalyq;
   }
 
@@ -134,28 +123,19 @@ export class ZhanalyqtarService {
   async search(
     query: string,
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
   ): Promise<PaginationResponseDto<Zhanalyq>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const titleField = lang === 'kaz' ? 'title' : 'titleQaz';
-    const contentField = lang === 'kaz' ? 'content' : 'contentQaz';
-
     const [zhanalyqtar, total] = await this.zhanalyqRepository.findAndCount({
       where: [
-        { [titleField]: ILike(`%${query}%`), status: ZhanalyqStatus.PUBLISHED },
-        {
-          [contentField]: ILike(`%${query}%`),
-          status: ZhanalyqStatus.PUBLISHED,
-        },
+        { title: ILike(`%${query}%`), status: ZhanalyqStatus.PUBLISHED },
+        { content: ILike(`%${query}%`), status: ZhanalyqStatus.PUBLISHED },
         { tags: Like(`%${query}%`), status: ZhanalyqStatus.PUBLISHED },
       ],
       order: { createdAt: 'DESC' },
       skip,
       take: limit,
     });
-
     return {
       data: zhanalyqtar,
       total,
@@ -167,14 +147,15 @@ export class ZhanalyqtarService {
     };
   }
 
-  async getFeatured(
-    lang: 'kaz' | 'qaz' = 'kaz',
-    limit: number = 6,
-  ): Promise<Zhanalyq[]> {
-    return this.zhanalyqRepository.find({
-      where: { status: ZhanalyqStatus.PUBLISHED, isFeatured: true },
-      order: { createdAt: 'DESC' },
-      take: limit,
+  async getFeatured(limit?: number): Promise<Zhanalyq[]> {
+    const queryBuilder = this.zhanalyqRepository.createQueryBuilder('zhanalyq');
+    queryBuilder.where('zhanalyq.status = :status', {
+      status: ZhanalyqStatus.PUBLISHED,
     });
+    queryBuilder.orderBy('zhanalyq.createdAt', 'DESC');
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+    return queryBuilder.getMany();
   }
 }

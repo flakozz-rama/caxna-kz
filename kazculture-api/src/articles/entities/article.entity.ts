@@ -25,14 +25,8 @@ export class Article extends BaseEntity {
   @Column({ name: 'title', length: 500 })
   title: string;
 
-  @Column({ name: 'title_qaz', length: 500, nullable: true })
-  titleQaz: string;
-
   @Column({ name: 'content', type: 'text' })
   content: string;
-
-  @Column({ name: 'content_qaz', type: 'text', nullable: true })
-  contentQaz: string;
 
   @Column({ type: 'text', array: true, default: [] })
   tags: string[];
@@ -65,10 +59,4 @@ export class Article extends BaseEntity {
 
   @Column({ name: 'author_id', nullable: true })
   authorId: string;
-
-  @Column({ name: 'meta_description_kaz', length: 500, nullable: true })
-  metaDescriptionKaz: string;
-
-  @Column({ name: 'meta_description_qaz', length: 500, nullable: true })
-  metaDescriptionQaz: string;
 }

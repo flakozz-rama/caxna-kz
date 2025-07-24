@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,7 +14,12 @@ export default function EditInterviewPage({ params }: { params: { id: string } }
   const [title, setTitle] = useState("Ақын Абай туралы сұхбат")
   const [interviewee, setInterviewee] = useState("Мұхтар Әуезов")
   const [content, setContent] = useState("Сұхбат мазмұны...")
-  const router = useRouter()
+  const router = useRouter();
+  useEffect(() => {
+    if (params.id === "admin") {
+      router.replace("/admin/suqbattar");
+    }
+  }, [params.id, router]);
 
   const handleSave = () => {
     router.push("/admin/suqbattar")

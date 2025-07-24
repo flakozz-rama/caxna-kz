@@ -31,14 +31,11 @@ export class VideosService {
 
   async findAll(
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
     status?: VideoStatus,
   ): Promise<PaginationResponseDto<Video>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
     const queryBuilder = this.videoRepository.createQueryBuilder('video');
-
     if (status) {
       queryBuilder.where('video.status = :status', { status });
     } else {
@@ -46,13 +43,11 @@ export class VideosService {
         status: VideoStatus.PUBLISHED,
       });
     }
-
     const [videos, total] = await queryBuilder
       .orderBy('video.createdAt', 'DESC')
       .skip(skip)
       .take(limit)
       .getManyAndCount();
-
     return {
       data: videos,
       total,
@@ -64,7 +59,7 @@ export class VideosService {
     };
   }
 
-  async findOne(id: string, lang: 'kaz' | 'qaz' = 'kaz'): Promise<Video> {
+  async findOne(id: string): Promise<Video> {
     const video = await this.videoRepository.findOne({ where: { id } });
     if (!video) {
       throw new NotFoundException('Video not found');
@@ -72,16 +67,13 @@ export class VideosService {
     return video;
   }
 
-  async findById(id: string, lang: 'kaz' | 'qaz' = 'kaz'): Promise<Video> {
+  async findById(id: string): Promise<Video> {
     const video = await this.videoRepository.findOne({ where: { id } });
     if (!video || video.status !== VideoStatus.PUBLISHED) {
       throw new NotFoundException('Video not found');
     }
-
-    // Increment views
     video.views += 1;
     await this.videoRepository.save(video);
-
     return video;
   }
 
@@ -107,28 +99,19 @@ export class VideosService {
   async search(
     query: string,
     paginationDto: PaginationDto,
-    lang: 'kaz' | 'qaz' = 'kaz',
   ): Promise<PaginationResponseDto<Video>> {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
-
-    const titleField = lang === 'kaz' ? 'title' : 'titleQaz';
-    const descriptionField = lang === 'kaz' ? 'description' : 'descriptionQaz';
-
     const [videos, total] = await this.videoRepository.findAndCount({
       where: [
-        { [titleField]: ILike(`%${query}%`), status: VideoStatus.PUBLISHED },
-        {
-          [descriptionField]: ILike(`%${query}%`),
-          status: VideoStatus.PUBLISHED,
-        },
+        { title: ILike(`%${query}%`), status: VideoStatus.PUBLISHED },
+        { description: ILike(`%${query}%`), status: VideoStatus.PUBLISHED },
         { tags: Like(`%${query}%`), status: VideoStatus.PUBLISHED },
       ],
       order: { createdAt: 'DESC' },
       skip,
       take: limit,
     });
-
     return {
       data: videos,
       total,
@@ -140,14 +123,15 @@ export class VideosService {
     };
   }
 
-  async getFeatured(
-    lang: 'kaz' | 'qaz' = 'kaz',
-    limit: number = 6,
-  ): Promise<Video[]> {
-    return this.videoRepository.find({
-      where: { status: VideoStatus.PUBLISHED },
-      order: { views: 'DESC', createdAt: 'DESC' },
-      take: limit,
+  async getFeatured(limit?: number): Promise<Video[]> {
+    const queryBuilder = this.videoRepository.createQueryBuilder('video');
+    queryBuilder.where('video.status = :status', {
+      status: VideoStatus.PUBLISHED,
     });
+    queryBuilder.orderBy('video.createdAt', 'DESC');
+    if (limit) {
+      queryBuilder.take(limit);
+    }
+    return queryBuilder.getMany();
   }
 }

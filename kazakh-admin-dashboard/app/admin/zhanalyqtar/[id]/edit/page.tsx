@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,6 +14,12 @@ export default function EditNewsPage({ params }: { params: { id: string } }) {
   const [title, setTitle] = useState("Жаңа жыл мерекесі туралы")
   const [content, setContent] = useState("Жаңалық мазмұны...")
   const router = useRouter()
+
+  useEffect(() => {
+    if (params.id === "admin") {
+      router.replace("/admin/zhanalyqtar");
+    }
+  }, [params.id, router]);
 
   const handleSave = () => {
     router.push("/admin/zhanalyqtar")

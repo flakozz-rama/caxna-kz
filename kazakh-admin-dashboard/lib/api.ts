@@ -38,7 +38,7 @@ export const uploadApi = {
 // Articles API
 export const articlesApi = {
   getAll: async (): Promise<Article[]> => {
-    const response = await axiosInstance.get<{data: Article[]}>('/articles/admin?page=1&limit=1000');
+    const response = await axiosInstance.get<{data: Article[]}>('/articles/admin');
     return response.data.data || [];
   },
   
@@ -65,7 +65,7 @@ export const articlesApi = {
 // News API
 export const newsApi = {
   getAll: async (): Promise<News[]> => {
-    const response = await axiosInstance.get<{data: News[]}>('/zhanalyqtar/admin?page=1&limit=1000');
+    const response = await axiosInstance.get<{data: News[]}>('/zhanalyqtar/admin');
     return response.data.data || [];
   },
   
@@ -92,7 +92,7 @@ export const newsApi = {
 // Videos API
 export const videosApi = {
   getAll: async (): Promise<Video[]> => {
-    const response = await axiosInstance.get<{data: Video[]}>('/videos/admin?page=1&limit=1000');
+    const response = await axiosInstance.get<{data: Video[]}>('/videos/admin');
     return response.data.data || [];
   },
   
@@ -119,7 +119,7 @@ export const videosApi = {
 // Interviews API
 export const interviewsApi = {
   getAll: async (): Promise<Interview[]> => {
-    const response = await axiosInstance.get<{data: Interview[]}>('/interviews/admin?page=1&limit=1000');
+    const response = await axiosInstance.get<{data: Interview[]}>('/interviews/admin');
     return response.data.data || [];
   },
   
@@ -146,8 +146,8 @@ export const interviewsApi = {
 // Users API
 export const usersApi = {
   getAll: async (): Promise<User[]> => {
-    const response = await axiosInstance.get<User[]>('/users');
-    return response.data;
+    const response = await axiosInstance.get<{data: User[]}>('/users');
+    return response.data.data || [];
   },
   
   getById: async (id: string): Promise<User> => {
@@ -173,7 +173,7 @@ export const usersApi = {
 // Special Projects API
 export const specialProjectsApi = {
   getAll: async (): Promise<SpecialProject[]> => {
-    const response = await axiosInstance.get<{data: SpecialProject[]}>('/arnaiy-zhobalar/admin?page=1&limit=1000');
+    const response = await axiosInstance.get<{data: SpecialProject[]}>('/arnaiy-zhobalar/admin');
     return response.data.data || [];
   },
   
