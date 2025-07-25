@@ -33,10 +33,10 @@ export default function HomePage() {
       <section className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">
-            Қазақ мәденитің порталы
+            Қазақ театр порталы
           </h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Қазақ халқының бай мәдени мұрасын, дәстүрлерін және заманауи өнерін зерттеуге арналған платформа
+            Қазақ халқының бай театр мұрасын, дәстүрлерін және заманауи өнерін зерттеуге арналған платформа
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/maqala">
