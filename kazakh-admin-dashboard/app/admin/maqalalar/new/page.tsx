@@ -153,100 +153,31 @@ function NewArticleForm() {
               <CardTitle>Негізгі ақпарат</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              <Tabs defaultValue="kaz" className="w-full">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="kaz">Қазақша</TabsTrigger>
-                  <TabsTrigger value="qaz">Qazaqşa</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="kaz" className="space-y-4">
-                  <div>
-                    <Label htmlFor="title" className="text-base font-medium mb-2 block">
-                      Атауы *
-                    </Label>
-                    <Input
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Мақала атауын енгізіңіз"
-                      className="text-base p-3 h-12"
-                    />
-                    <ValidationError error={getFieldError('title')} />
-                  </div>
+              
+                <div>
+                  <Label htmlFor="title" className="text-base font-medium mb-2 block">
+                    Атауы *
+                  </Label>
+                  <Input
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Мақала атауын енгізіңіз"
+                    className="text-base p-3 h-12"
+                  />
+                  <ValidationError error={getFieldError('title')} />
+                </div>
 
-                  <div>
-                    <Label className="text-base font-medium mb-2 block">Мазмұны *</Label>
-                    <Textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      placeholder="Мақала мазмұнын жазыңыз..."
-                      className="min-h-[300px] text-base p-4"
-                    />
-                    <ValidationError error={getFieldError('content')} />
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="qaz" className="space-y-4">
-                  <div>
-                    <Label htmlFor="titleQaz" className="text-base font-medium mb-2 block">
-                      Атауы (Qazaqşa)
-                    </Label>
-                    <Input
-                      id="titleQaz"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Мақала атауын енгізіңіз"
-                      className="text-base p-3 h-12"
-                    />
-                    <ValidationError error={getFieldError('title')} />
-                  </div>
-
-                  <div>
-                    <Label className="text-base font-medium mb-2 block">Мазмұны (Qazaqşa)</Label>
-                    <Textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      placeholder="Мақала мазмұнын жазыңыз..."
-                      className="min-h-[300px] text-base p-4"
-                    />
-                    <ValidationError error={getFieldError('content')} />
-                  </div>
-                </TabsContent>
-              </Tabs>
-
-              <div>
-                <Label className="text-base font-medium mb-2 block">Санат</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger className="text-base p-3 h-12">
-                    <SelectValue placeholder="Санатты таңдаңыз" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.value} value={cat.value}>
-                        {cat.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <ValidationError error={getFieldError('category')} />
-              </div>
-
-              <div>
-                <Label className="text-base font-medium mb-2 block">Күй</Label>
-                <Select value={status} onValueChange={(value: "draft" | "published" | "pending") => setStatus(value)}>
-                  <SelectTrigger className="text-base p-3 h-12">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <ValidationError error={getFieldError('status')} />
-              </div>
+                <div>
+                  <Label className="text-base font-medium mb-2 block">Мазмұны *</Label>
+                  <Textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    placeholder="Мақала мазмұнын жазыңыз..."
+                    className="min-h-[300px] text-base p-4"
+                  />
+                  <ValidationError error={getFieldError('content')} />
+                </div>
             </CardContent>
           </Card>
         </div>

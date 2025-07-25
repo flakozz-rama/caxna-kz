@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Save, Send, Upload, X } from "lucide-react"
 import { useArticle, useUpdateArticle, useUploadFile } from "@/lib/api"
 import { toast } from "@/hooks/use-toast"
@@ -159,28 +158,26 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
             </CardHeader>
             <CardContent className="space-y-6">
               
-                <TabsContent value="kaz" className="space-y-4">
-                  <div>
-                    <Label htmlFor="title" className="text-base font-medium mb-2 block">
-                      Атауы *
-                    </Label>
-                    <Input
-                      id="title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
-                      className="text-base p-3 h-12"
-                    />
-                  </div>
+                <div>
+                  <Label htmlFor="title" className="text-base font-medium mb-2 block">
+                    Атауы *
+                  </Label>
+                  <Input
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="text-base p-3 h-12"
+                  />
+                </div>
 
-                  <div>
-                    <Label className="text-base font-medium mb-2 block">Мазмұны *</Label>
-                    <Textarea
-                      value={content}
-                      onChange={(e) => setContent(e.target.value)}
-                      className="min-h-[300px] text-base p-4"
-                    />
-                  </div>
-                </TabsContent>
+                <div>
+                  <Label className="text-base font-medium mb-2 block">Мазмұны *</Label>
+                  <Textarea
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    className="min-h-[300px] text-base p-4"
+                  />
+                </div>
                 
             </CardContent>
           </Card>
