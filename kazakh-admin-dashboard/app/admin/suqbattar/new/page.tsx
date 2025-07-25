@@ -9,16 +9,31 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useCreateInterview } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
 
 export default function NewInterviewPage() {
   const [title, setTitle] = useState("")
   const [interviewee, setInterviewee] = useState("")
   const [content, setContent] = useState("")
   const router = useRouter()
+  const createInterview = useCreateInterview();
 
-  const handleSave = () => {
-    router.push("/admin/suqbattar")
-  }
+  const handleSave = async () => {
+    try {
+      await createInterview.mutateAsync({
+        title,
+        content,
+        interviewee,
+        status: 'published', // или draft, если нужно
+        // другие нужные поля
+      });
+      toast({ title: "Сәтті!", description: "Сұхбат сәтті қосылды" });
+      router.push("/admin/suqbattar");
+    } catch (error) {
+      toast({ title: "Қате!", description: error?.message || "Сұхбат қосу кезінде қате орын алды", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

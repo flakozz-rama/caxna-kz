@@ -17,9 +17,4 @@ export class UpdateArticleDto extends PartialType(CreateArticleDto) {
   @IsOptional()
   @IsDateString()
   publishedAt?: Date;
-
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
 }

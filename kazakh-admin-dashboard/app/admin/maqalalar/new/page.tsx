@@ -73,57 +73,63 @@ function NewArticleForm() {
     setImageUrl("")
   }
 
-  const handleSave = async () => {
-    clearErrors()
-
+  const handlePublish = async () => {
+    clearErrors();
     const articleData = {
       title,
       content,
       category: category || undefined,
-      status,
+      status: "published" as "published",
       imageUrl: imageUrl || undefined,
-    }
-
-    const validation = validate(articleData)
+    };
+    const validation = validate(articleData);
     if (!validation.isValid) {
-      toast({
-        title: "Қате!",
-        description: "Деректерді тексеріңіз",
-        variant: "destructive",
-      })
-      return
+      toast({ title: "Қате!", description: "Деректерді тексеріңіз", variant: "destructive" });
+      return;
     }
-
     try {
-      let finalImageUrl = imageUrl
-      
-      // Загружаем файл если есть
+      let finalImageUrl = imageUrl;
       if (imageFile && typeof window !== 'undefined') {
-        const uploadResult = await uploadFileMutation.mutateAsync(imageFile)
-        finalImageUrl = uploadResult.url
+        const uploadResult = await uploadFileMutation.mutateAsync(imageFile);
+        finalImageUrl = uploadResult.url;
       }
-
-      const finalArticleData = {
-        ...articleData,
-        imageUrl: finalImageUrl || undefined,
-      }
-
-      await createArticleMutation.mutateAsync(finalArticleData)
-      
-      toast({
-        title: "Сәтті!",
-        description: "Мақала сәтті қосылды",
-      })
-      
-      router.push("/admin/maqalalar")
+      const finalArticleData = { ...articleData, imageUrl: finalImageUrl || undefined };
+      await createArticleMutation.mutateAsync(finalArticleData);
+      toast({ title: "Сәтті!", description: "Мақала сәтті жарияланды" });
+      router.push("/admin/maqalalar");
     } catch (error: any) {
-      toast({
-        title: "Қате!",
-        description: error.message || "Мақала қосу кезінде қате орын алды",
-        variant: "destructive",
-      })
+      toast({ title: "Қате!", description: error.message || "Мақала жариялау кезінде қате орын алды", variant: "destructive" });
     }
-  }
+  };
+
+  const handleSaveDraft = async () => {
+    clearErrors();
+    const articleData = {
+      title,
+      content,
+      category: category || undefined,
+      status: "draft" as "draft",
+      imageUrl: imageUrl || undefined,
+    };
+    const validation = validate(articleData);
+    if (!validation.isValid) {
+      toast({ title: "Қате!", description: "Деректерді тексеріңіз", variant: "destructive" });
+      return;
+    }
+    try {
+      let finalImageUrl = imageUrl;
+      if (imageFile && typeof window !== 'undefined') {
+        const uploadResult = await uploadFileMutation.mutateAsync(imageFile);
+        finalImageUrl = uploadResult.url;
+      }
+      const finalArticleData = { ...articleData, imageUrl: finalImageUrl || undefined };
+      await createArticleMutation.mutateAsync(finalArticleData);
+      toast({ title: "Сәтті!", description: "Мақала жоба ретінде сақталды" });
+      router.push("/admin/maqalalar");
+    } catch (error: any) {
+      toast({ title: "Қате!", description: error.message || "Мақаланы сақтау кезінде қате орын алды", variant: "destructive" });
+    }
+  };
 
   const isLoading = createArticleMutation.isPending || uploadFileMutation.isPending
 
@@ -231,14 +237,14 @@ function NewArticleForm() {
             <CardContent className="pt-6">
               <div className="space-y-3">
                 <Button 
-                  onClick={handleSave}
+                  onClick={handlePublish}
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white text-base py-3"
                   disabled={isLoading}
                 >
                   <Send className="w-4 h-4 mr-2" />
                   {isLoading ? "Сақтауда..." : "Жариялау"}
                 </Button>
-                <Button variant="outline" className="w-full text-base py-3" disabled={isLoading}>
+                <Button variant="outline" className="w-full text-base py-3" onClick={handleSaveDraft} disabled={isLoading}>
                   <Save className="w-4 h-4 mr-2" />
                   Жоба ретінде сақтау
                 </Button>

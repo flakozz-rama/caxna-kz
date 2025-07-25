@@ -47,21 +47,11 @@ export class CreateZhanalyqDto {
   @IsDateString()
   eventDate?: string;
 
-  @ApiPropertyOptional({ description: 'Location' })
-  @IsOptional()
-  @IsString()
-  locationKaz?: string;
-
   @ApiPropertyOptional({ description: 'News tags' })
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
-
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
 
   @ApiPropertyOptional({ description: 'Is featured news' })
   @IsOptional()

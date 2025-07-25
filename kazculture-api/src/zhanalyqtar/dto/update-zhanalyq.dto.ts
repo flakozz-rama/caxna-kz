@@ -14,16 +14,6 @@ export class UpdateZhanalyqDto extends PartialType(CreateZhanalyqDto) {
   @IsString()
   content?: string;
 
-  @ApiPropertyOptional({ description: 'Location' })
-  @IsOptional()
-  @IsString()
-  locationKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
-
   @IsOptional()
   @IsDateString()
   publishedAt?: Date;

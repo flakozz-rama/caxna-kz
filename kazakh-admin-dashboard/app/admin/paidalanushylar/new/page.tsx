@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save } from "lucide-react"
+import { useCreateUser } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
 
 export default function NewUserPage() {
   const [name, setName] = useState("")
@@ -16,10 +18,22 @@ export default function NewUserPage() {
   const [role, setRole] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
+  const createUser = useCreateUser();
 
-  const handleSave = () => {
-    router.push("/admin/paidalanushylar")
-  }
+  const handleSave = async () => {
+    try {
+      await createUser.mutateAsync({
+        name,
+        email,
+        password,
+        role,
+      });
+      toast({ title: "Сәтті!", description: "Пайдаланушы сәтті қосылды" });
+      router.push("/admin/paidalanushylar");
+    } catch (error) {
+      toast({ title: "Қате!", description: error?.message || "Пайдаланушы қосу кезінде қате орын алды", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">

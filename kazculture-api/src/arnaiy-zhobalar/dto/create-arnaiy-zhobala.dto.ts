@@ -58,16 +58,6 @@ export class CreateArnaiyZhobalaDto {
   @IsDateString()
   eventEndDate?: string;
 
-  @ApiPropertyOptional({ description: 'Location' })
-  @IsOptional()
-  @IsString()
-  locationKaz?: string;
-
-  @ApiPropertyOptional({ description: 'Organizer' })
-  @IsOptional()
-  @IsString()
-  organizerKaz?: string;
-
   @ApiPropertyOptional({ description: 'Contact information' })
   @IsOptional()
   @IsString()
@@ -83,11 +73,6 @@ export class CreateArnaiyZhobalaDto {
   @IsArray()
   @IsString({ each: true })
   tags?: string[];
-
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
 
   @ApiPropertyOptional({ description: 'Is featured event' })
   @IsOptional()

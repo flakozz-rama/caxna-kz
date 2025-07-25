@@ -18,9 +18,4 @@ export class UpdateVideoDto extends PartialType(CreateVideoDto) {
   @IsOptional()
   @IsDateString()
   publishedAt?: Date;
-
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
 }

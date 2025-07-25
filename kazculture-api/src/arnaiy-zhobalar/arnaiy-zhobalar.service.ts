@@ -11,6 +11,7 @@ import {
   PaginationDto,
   PaginationResponseDto,
 } from '../common/dto/pagination.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ArnaiyZhobalarService {
@@ -32,9 +33,12 @@ export class ArnaiyZhobalarService {
     createArnaiyZhobalaDto: CreateArnaiyZhobalaDto,
     authorId?: string,
   ): Promise<ArnaiyZhobala> {
-    // Генерируем slug если не предоставлен
-    if (!createArnaiyZhobalaDto.slug) {
+    // Генерируем slug если не предоставлен или если он пустой
+    if (!createArnaiyZhobalaDto.slug || !createArnaiyZhobalaDto.slug.trim()) {
       createArnaiyZhobalaDto.slug = this.generateSlug(createArnaiyZhobalaDto.title);
+      if (!createArnaiyZhobalaDto.slug) {
+        createArnaiyZhobalaDto.slug = uuidv4();
+      }
     }
 
     const arnaiyZhobala = this.arnaiyZhobalaRepository.create({

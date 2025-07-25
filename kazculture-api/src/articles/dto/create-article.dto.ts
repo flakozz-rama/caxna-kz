@@ -48,9 +48,4 @@ export class CreateArticleDto {
   @IsOptional()
   @IsEnum(ArticleStatus)
   status?: ArticleStatus;
-
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
 }

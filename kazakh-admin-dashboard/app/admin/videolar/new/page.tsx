@@ -9,16 +9,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Save, Send, Upload } from "lucide-react"
+import { useCreateVideo } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
 
 export default function NewVideoPage() {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [embedLink, setEmbedLink] = useState("")
   const router = useRouter()
+  const createVideo = useCreateVideo();
 
-  const handleSave = () => {
-    router.push("/admin/videolar")
-  }
+  const handleSave = async () => {
+    try {
+      await createVideo.mutateAsync({
+        title,
+        description,
+        url: embedLink,
+        // добавь другие нужные поля если есть
+      });
+      toast({ title: "Сәтті!", description: "Видео сәтті қосылды" });
+      router.push("/admin/videolar");
+    } catch (error) {
+      toast({ title: "Қате!", description: error?.message || "Видео қосу кезінде қате орын алды", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

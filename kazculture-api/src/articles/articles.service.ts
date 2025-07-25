@@ -8,6 +8,7 @@ import {
   PaginationDto,
   PaginationResponseDto,
 } from '../common/dto/pagination.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class ArticlesService {
@@ -29,9 +30,12 @@ export class ArticlesService {
     createArticleDto: CreateArticleDto,
     authorId?: string,
   ): Promise<Article> {
-    // Генерируем slug если не предоставлен
-    if (!createArticleDto.slug) {
+    // Генерируем slug если не предоставлен или если он пустой
+    if (!createArticleDto.slug || !createArticleDto.slug.trim()) {
       createArticleDto.slug = this.generateSlug(createArticleDto.title);
+      if (!createArticleDto.slug) {
+        createArticleDto.slug = uuidv4();
+      }
     }
 
     const article = this.articleRepository.create({

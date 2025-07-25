@@ -8,6 +8,7 @@ import {
   PaginationDto,
   PaginationResponseDto,
 } from '../common/dto/pagination.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class VideosService {
@@ -20,6 +21,13 @@ export class VideosService {
     createVideoDto: CreateVideoDto,
     authorId?: string,
   ): Promise<Video> {
+    // Генерируем slug если не предоставлен или если он пустой
+    if (!createVideoDto.slug || !createVideoDto.slug.trim()) {
+      createVideoDto.slug = this.generateSlug(createVideoDto.title);
+      if (!createVideoDto.slug) {
+        createVideoDto.slug = uuidv4();
+      }
+    }
     const video = this.videoRepository.create({
       ...createVideoDto,
       authorId,

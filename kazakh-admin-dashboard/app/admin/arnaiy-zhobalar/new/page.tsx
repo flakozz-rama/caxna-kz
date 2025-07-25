@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useCreateSpecialProject } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
 
 const statuses = ["Жоспарлануда", "Белсенді", "Аяқталған", "Тоқтатылған"]
 
@@ -18,10 +20,22 @@ export default function NewProjectPage() {
   const [status, setStatus] = useState("")
   const [description, setDescription] = useState("")
   const router = useRouter()
+  const createSpecialProject = useCreateSpecialProject();
 
-  const handleSave = () => {
-    router.push("/admin/arnaiy-zhobalar")
-  }
+  const handleSave = async () => {
+    try {
+      await createSpecialProject.mutateAsync({
+        title,
+        description,
+        status: 'published', // или draft, если нужно
+        // другие нужные поля
+      });
+      toast({ title: "Сәтті!", description: "Жоба сәтті қосылды" });
+      router.push("/admin/arnaiy-zhobalar");
+    } catch (error) {
+      toast({ title: "Қате!", description: error?.message || "Жоба қосу кезінде қате орын алды", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">

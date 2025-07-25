@@ -14,11 +14,6 @@ export class UpdateInterviewDto extends PartialType(CreateInterviewDto) {
   @IsString()
   content?: string;
 
-  @ApiPropertyOptional({ description: 'Meta description' })
-  @IsOptional()
-  @IsString()
-  metaDescriptionKaz?: string;
-
   @IsOptional()
   @IsDateString()
   publishedAt?: Date;

@@ -9,15 +9,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useCreateNews } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
 
 export default function NewNewsPage() {
   const [title, setTitle] = useState("")
   const [content, setContent] = useState("")
   const router = useRouter()
+  const createNews = useCreateNews();
 
-  const handleSave = () => {
-    router.push("/admin/zhanalyqtar")
-  }
+  const handleSave = async () => {
+    try {
+      await createNews.mutateAsync({
+        title,
+        content,
+        category: 'culture', // или выбери из формы
+        status: 'published', // или draft, если нужно
+        // другие нужные поля
+      });
+      toast({ title: "Сәтті!", description: "Жаңалық сәтті қосылды" });
+      router.push("/admin/zhanalyqtar");
+    } catch (error) {
+      toast({ title: "Қате!", description: error?.message || "Жаңалық қосу кезінде қате орын алды", variant: "destructive" });
+    }
+  };
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
