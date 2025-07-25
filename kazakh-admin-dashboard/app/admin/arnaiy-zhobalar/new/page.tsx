@@ -27,7 +27,7 @@ export default function NewProjectPage() {
       await createSpecialProject.mutateAsync({
         title,
         description,
-        status: 'published', // или draft, если нужно
+        status: "draft" as "draft",
         // другие нужные поля
       });
       toast({ title: "Сәтті!", description: "Жоба сәтті қосылды" });

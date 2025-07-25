@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,37 +15,36 @@ import { toast } from "@/hooks/use-toast"
 
 const categories = ["Мәдениет", "Тарих", "Өнер", "Музыка", "Әдебиет", "Дәстүр", "Заманауи өмір"]
 
-export default function EditArticlePage({ params }: { params: { id: string } }) {
+export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use<{ id: string }>(params);
   const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
+  const [status, setStatus] = useState<"draft" | "published" | "pending">("draft");
+  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { data: article, isLoading: isLoadingArticle } = useArticle(id);
+  const updateArticleMutation = useUpdateArticle();
+  const uploadFileMutation = useUploadFile();
+
   useEffect(() => {
-    if (params.id === "admin") {
+    if (id === "admin") {
       router.replace("/admin/maqalalar");
     }
-  }, [params.id, router]);
+  }, [id, router]);
 
-  const [title, setTitle] = useState("")
-  const [content, setContent] = useState("")
-  const [category, setCategory] = useState("")
-  const [status, setStatus] = useState<"draft" | "published" | "pending">("draft")
-  const [imageUrl, setImageUrl] = useState("")
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
-  
-  const { data: article, isLoading: isLoadingArticle } = useArticle(params.id)
-  const updateArticleMutation = useUpdateArticle()
-  const uploadFileMutation = useUploadFile()
-
-  // Загружаем данные статьи при получении
   useEffect(() => {
     if (article) {
-      setTitle(article.title || "")
-      setContent(article.content || "")
-      setCategory(article.category || "")
-      setStatus(article.status || "draft")
-      setImageUrl(article.imageUrl || "")
-      setImagePreview(article.imageUrl || null)
+      setTitle(article.title || "");
+      setContent(article.content || "");
+      setCategory(article.category || "");
+      setStatus(article.status || "draft");
+      setImageUrl(article.imageUrl || "");
+      setImagePreview(article.imageUrl || null);
     }
-  }, [article])
+  }, [article]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -83,7 +82,7 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
         imageUrl: finalImageUrl,
       }
 
-      await updateArticleMutation.mutateAsync({ id: params.id, data: articleData })
+      await updateArticleMutation.mutateAsync({ id: id, data: articleData })
       
       toast({
         title: "Сәтті!",
@@ -146,7 +145,7 @@ export default function EditArticlePage({ params }: { params: { id: string } }) 
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Мақаланы өңдеу</h1>
-          <p className="text-gray-600 mt-1">Мақала #{params.id}</p>
+          <p className="text-gray-600 mt-1">Мақала #{id}</p>
         </div>
       </div>
 

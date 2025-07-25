@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,17 +9,27 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useNewsItem, useUpdateNews } from "@/lib/api"
 
-export default function EditNewsPage({ params }: { params: { id: string } }) {
-  const [title, setTitle] = useState("Жаңа жыл мерекесі туралы")
-  const [content, setContent] = useState("Жаңалық мазмұны...")
-  const router = useRouter()
+export default function EditNewsPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use<{ id: string }>(params);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const router = useRouter();
+  const { data: news, isLoading: isLoadingNews } = useNewsItem(id);
 
   useEffect(() => {
-    if (params.id === "admin") {
+    if (id === "admin") {
       router.replace("/admin/zhanalyqtar");
     }
-  }, [params.id, router]);
+  }, [id, router]);
+
+  useEffect(() => {
+    if (news) {
+      setTitle(news.title || "");
+      setContent(news.content || "");
+    }
+  }, [news]);
 
   const handleSave = () => {
     router.push("/admin/zhanalyqtar")
@@ -35,7 +45,7 @@ export default function EditNewsPage({ params }: { params: { id: string } }) {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Жаңалықты өңдеу</h1>
-          <p className="text-gray-600 mt-1">Жаңалық #{params.id}</p>
+          <p className="text-gray-600 mt-1">Жаңалық #{id}</p>
         </div>
       </div>
 

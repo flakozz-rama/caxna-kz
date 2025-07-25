@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { use, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,12 +9,29 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save } from "lucide-react"
+import { useUser } from "@/lib/api";
 
-export default function EditUserPage({ params }: { params: { id: string } }) {
-  const [name, setName] = useState("Айгүл Сейітова")
-  const [email, setEmail] = useState("aigul@example.com")
-  const [role, setRole] = useState("admin")
-  const router = useRouter()
+export default function EditUserPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use<{ id: string }>(params);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const router = useRouter();
+  const { data: user, isLoading: isLoadingUser } = useUser(id);
+
+  useEffect(() => {
+    if (id === "admin") {
+      router.replace("/admin/paidalanushylar");
+    }
+  }, [id, router]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setRole(user.role || "");
+    }
+  }, [user]);
 
   const handleSave = () => {
     router.push("/admin/paidalanushylar")
@@ -30,7 +47,7 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Пайдаланушыны өңдеу</h1>
-          <p className="text-gray-600 mt-1">Пайдаланушы #{params.id}</p>
+          <p className="text-gray-600 mt-1">Пайдаланушы #{id}</p>
         </div>
       </div>
 

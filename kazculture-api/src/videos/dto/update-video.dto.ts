@@ -18,4 +18,9 @@ export class UpdateVideoDto extends PartialType(CreateVideoDto) {
   @IsOptional()
   @IsDateString()
   publishedAt?: Date;
+
+  @ApiPropertyOptional({ description: 'Video slug' })
+  @IsOptional()
+  @IsString()
+  slug?: string;
 }

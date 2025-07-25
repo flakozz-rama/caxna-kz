@@ -36,6 +36,9 @@ export class Video extends BaseEntity {
   @Column({ name: 'url' })
   url: string;
 
+  @Column({ name: 'slug', unique: true, nullable: true })
+  slug: string;
+
   @Column({
     type: 'enum',
     enum: VideoCategory,

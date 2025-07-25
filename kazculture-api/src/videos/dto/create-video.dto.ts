@@ -30,6 +30,11 @@ export class CreateVideoDto {
   @IsUrl()
   thumbnailUrl?: string;
 
+  @ApiPropertyOptional({ description: 'Video slug' })
+  @IsOptional()
+  @IsString()
+  slug?: string;
+
   @ApiProperty({ description: 'Video URL' })
   @IsUrl()
   url: string;

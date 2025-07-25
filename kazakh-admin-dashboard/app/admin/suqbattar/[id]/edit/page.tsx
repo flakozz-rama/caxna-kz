@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,17 +9,29 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useInterview, useUpdateInterview } from "@/lib/api"
 
-export default function EditInterviewPage({ params }: { params: { id: string } }) {
-  const [title, setTitle] = useState("Ақын Абай туралы сұхбат")
-  const [interviewee, setInterviewee] = useState("Мұхтар Әуезов")
-  const [content, setContent] = useState("Сұхбат мазмұны...")
+export default function EditInterviewPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use<{ id: string }>(params);
+  const [title, setTitle] = useState("");
+  const [interviewee, setInterviewee] = useState("");
+  const [content, setContent] = useState("");
   const router = useRouter();
+  const { data: interview, isLoading: isLoadingInterview } = useInterview(id);
+
   useEffect(() => {
-    if (params.id === "admin") {
+    if (id === "admin") {
       router.replace("/admin/suqbattar");
     }
-  }, [params.id, router]);
+  }, [id, router]);
+
+  useEffect(() => {
+    if (interview) {
+      setTitle(interview.title || "");
+      setInterviewee(interview.interviewee || "");
+      setContent(interview.content || "");
+    }
+  }, [interview]);
 
   const handleSave = () => {
     router.push("/admin/suqbattar")
@@ -35,7 +47,7 @@ export default function EditInterviewPage({ params }: { params: { id: string } }
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Сұхбатты өңдеу</h1>
-          <p className="text-gray-600 mt-1">Сұхбат #{params.id}</p>
+          <p className="text-gray-600 mt-1">Сұхбат #{id}</p>
         </div>
       </div>
 

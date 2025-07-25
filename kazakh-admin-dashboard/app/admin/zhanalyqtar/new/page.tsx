@@ -24,7 +24,7 @@ export default function NewNewsPage() {
         title,
         content,
         category: 'culture', // или выбери из формы
-        status: 'published', // или draft, если нужно
+        status: "draft" as "draft",
         // другие нужные поля
       });
       toast({ title: "Сәтті!", description: "Жаңалық сәтті қосылды" });

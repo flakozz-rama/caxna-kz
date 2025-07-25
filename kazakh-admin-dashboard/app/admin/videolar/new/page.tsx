@@ -25,6 +25,7 @@ export default function NewVideoPage() {
         title,
         description,
         url: embedLink,
+        status: "draft" as "draft",
         // добавь другие нужные поля если есть
       });
       toast({ title: "Сәтті!", description: "Видео сәтті қосылды" });

@@ -25,7 +25,7 @@ export default function NewInterviewPage() {
         title,
         content,
         interviewee,
-        status: 'published', // или draft, если нужно
+        status: "draft" as "draft",
         // другие нужные поля
       });
       toast({ title: "Сәтті!", description: "Сұхбат сәтті қосылды" });

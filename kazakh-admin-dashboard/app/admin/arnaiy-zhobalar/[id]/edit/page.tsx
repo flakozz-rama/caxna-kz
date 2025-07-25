@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,19 +10,31 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useSpecialProject, useUpdateSpecialProject } from "@/lib/api"
 
 const statuses = ["Жоспарлануда", "Белсенді", "Аяқталған", "Тоқтатылған"]
 
-export default function EditProjectPage({ params }: { params: { id: string } }) {
-  const [title, setTitle] = useState("Ұлттық киім көрмесі")
-  const [status, setStatus] = useState("Белсенді")
-  const [description, setDescription] = useState("Жоба сипаттамасы...")
+export default function EditProjectPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use<{ id: string }>(params);
+  const [title, setTitle] = useState("");
+  const [status, setStatus] = useState("");
+  const [description, setDescription] = useState("");
   const router = useRouter();
+  const { data: project, isLoading: isLoadingProject } = useSpecialProject(id);
+
   useEffect(() => {
-    if (params.id === "admin") {
+    if (id === "admin") {
       router.replace("/admin/arnaiy-zhobalar");
     }
-  }, [params.id, router]);
+  }, [id, router]);
+
+  useEffect(() => {
+    if (project) {
+      setTitle(project.title || "");
+      setStatus(project.status || "");
+      setDescription(project.description || "");
+    }
+  }, [project]);
 
   const handleSave = () => {
     router.push("/admin/arnaiy-zhobalar")
@@ -38,7 +50,7 @@ export default function EditProjectPage({ params }: { params: { id: string } }) 
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Жобаны өңдеу</h1>
-          <p className="text-gray-600 mt-1">Жоба #{params.id}</p>
+          <p className="text-gray-600 mt-1">Жоба #{id}</p>
         </div>
       </div>
 

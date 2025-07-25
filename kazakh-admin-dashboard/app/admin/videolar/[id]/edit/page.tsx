@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { use, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,18 +9,29 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ArrowLeft, Save, Send } from "lucide-react"
+import { useVideo, useUpdateVideo } from "@/lib/api"
 
-export default function EditVideoPage({ params }: { params: { id: string } }) {
-  const [title, setTitle] = useState("Қазақ халқының дәстүрлері")
-  const [description, setDescription] = useState("Видео сипаттамасы...")
-  const [embedLink, setEmbedLink] = useState("https://youtube.com/watch?v=example")
-  const router = useRouter()
+export default function EditVideoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use<{ id: string }>(params);
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const router = useRouter();
+  const { data: video, isLoading: isLoadingVideo } = useVideo(id);
 
   useEffect(() => {
-    if (params.id === "admin") {
+    if (id === "admin") {
       router.replace("/admin/videolar");
     }
-  }, [params.id, router]);
+  }, [id, router]);
+
+  useEffect(() => {
+    if (video) {
+      setTitle(video.title || "");
+      setUrl(video.url || "");
+      setDescription(video.description || "");
+    }
+  }, [video]);
 
   const handleSave = () => {
     router.push("/admin/videolar")
@@ -36,7 +47,7 @@ export default function EditVideoPage({ params }: { params: { id: string } }) {
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Видеоны өңдеу</h1>
-          <p className="text-gray-600 mt-1">Видео #{params.id}</p>
+          <p className="text-gray-600 mt-1">Видео #{id}</p>
         </div>
       </div>
 
@@ -77,8 +88,8 @@ export default function EditVideoPage({ params }: { params: { id: string } }) {
                 </Label>
                 <Input
                   id="embed-link"
-                  value={embedLink}
-                  onChange={(e) => setEmbedLink(e.target.value)}
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
                   className="text-base p-3 h-12"
                 />
               </div>
