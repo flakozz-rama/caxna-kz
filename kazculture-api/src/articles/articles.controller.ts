@@ -25,6 +25,7 @@ import {
 } from '../common/dto/pagination.dto';
 import { Article } from './entities/article.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ArticleStatus } from './entities/article.entity';
 
 @ApiTags('Articles')
 @Controller('articles')
@@ -83,7 +84,9 @@ export class ArticlesController {
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<Article>> {
-    return this.articlesService.findAll(paginationDto, status as any);
+    // Если статус не передан, показываем все статьи (включая черновики)
+    const articleStatus = status ? (status as ArticleStatus) : undefined;
+    return this.articlesService.findAll(paginationDto, articleStatus);
   }
 
   @UseGuards(JwtAuthGuard)

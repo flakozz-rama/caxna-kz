@@ -10,12 +10,13 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">Қ</span>
+                <span className="text-white font-bold text-sm">C</span>
               </div>
-              <span className="font-bold text-xl">Мәдени портал</span>
+              <span className="font-bold text-xl">Caxna.kz</span>
             </div>
             <p className="text-gray-300 mb-6 max-w-md">
-              Қазақстанның мәдени өмірі мен өнер туралы ең соңғы жаңалықтар мен мақалалар
+              Құрметті, театр сүйер қауым!<br/>
+              Біздің сайтқа қош келдіңіздер! Бұл жерде Сіз театр өнеріне деген ШЫНАЙЫ құрмет, ШЫНАЙЫ баға, ШЫНАЙЫ көзқарасты табасыз! Талғамыңыз бен талабыңыздан шығуға әзірміз!
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-gray-400 hover:text-white transition-colors">
@@ -89,7 +90,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Қазақ мәдени порталы. Барлық құқықтар қорғалған.</p>
+          <p>&copy; {new Date().getFullYear()} Caxna.kz. Барлық құқықтар қорғалған.</p>
         </div>
       </div>
     </footer>

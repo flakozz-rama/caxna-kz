@@ -122,18 +122,7 @@ export interface User {
   isActive?: boolean;
 }
 
-export interface SpecialProject {
-  id: string;
-  title: string;
-  content: string;
-  slug?: string;
-  author?: string;
-  status: 'draft' | 'published' | 'pending';
-  views?: number;
-  imageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+
 
 export interface LoginResponse {
   access_token?: string;
@@ -146,8 +135,9 @@ export interface DashboardStats {
   newsCount: number;
   videosCount: number;
   interviewsCount: number;
+  playsCount: number;
+  reviewsCount: number;
   usersCount: number;
-  projectsCount: number;
   totalViews: number;
 }
 

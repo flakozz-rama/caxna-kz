@@ -1,23 +1,23 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, Calendar, User, ArrowLeft } from "lucide-react"
-import { getArticleBySlug } from "@/lib/api"
+import { ChevronRight, User, Calendar, Clock, ArrowLeft } from "lucide-react"
+import { getInterviewById } from "@/lib/api"
 
-export default async function MaqalaDetailPage({ params }: { params: { slug: string } }) {
-  let article: any = null;
+export default async function SuqbatDetailPage({ params }: { params: { id: string } }) {
+  let interview: any = null;
   try {
-    article = await getArticleBySlug(params.slug);
+    interview = await getInterviewById(params.id);
   } catch (e) {
     // Можно добавить обработку ошибки
   }
 
-  if (!article) {
+  if (!interview) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Мақала табылмады</h1>
-          <Link href="/maqala" className="text-blue-600 hover:text-blue-800">
-            Мақалаларға оралу
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Сұқбат табылмады</h1>
+          <Link href="/suqbat" className="text-blue-600 hover:text-blue-800">
+            Сұқбаттарға оралу
           </Link>
         </div>
       </div>
@@ -28,9 +28,9 @@ export default async function MaqalaDetailPage({ params }: { params: { slug: str
     <div className="container mx-auto px-4 py-8">
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link href="/maqala" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+        <Link href="/suqbat" className="inline-flex items-center text-blue-600 hover:text-blue-800">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Мақалаларға оралу
+          Сұқбаттарға оралу
         </Link>
       </div>
 
@@ -40,33 +40,37 @@ export default async function MaqalaDetailPage({ params }: { params: { slug: str
           Басты бет
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <Link href="/maqala" className="hover:text-blue-600">
-          Мақала
+        <Link href="/suqbat" className="hover:text-blue-600">
+          Сұқбат
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-gray-900">{article.title}</span>
+        <span className="text-gray-900">{interview.title}</span>
       </nav>
 
       <article className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{article.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{interview.title}</h1>
 
           <div className="flex items-center space-x-6 text-gray-600 mb-6">
             <div className="flex items-center">
               <User className="w-4 h-4 mr-2" />
-              {article.author || "Мақала авторы"}
+              {interview.interviewee || interview.author || "Сұқбаттасушы"}
             </div>
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
-              {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : ""}
+              {interview.createdAt ? new Date(interview.createdAt).toLocaleDateString() : ""}
+            </div>
+            <div className="flex items-center">
+              <Clock className="w-4 h-4 mr-2" />
+              {interview.duration || interview.readTime || "10 минут"}
             </div>
           </div>
 
-          {article.imageUrl && (
+          {interview.imageUrl && (
             <div className="relative h-64 md:h-96 mb-8">
               <Image
-                src={article.imageUrl}
-                alt={article.title}
+                src={interview.imageUrl}
+                alt={interview.title}
                 fill
                 className="object-cover rounded-lg"
               />
@@ -75,7 +79,7 @@ export default async function MaqalaDetailPage({ params }: { params: { slug: str
         </header>
 
         <div className="prose prose-lg max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: article.content || article.description || "" }} />
+          <div dangerouslySetInnerHTML={{ __html: interview.content || interview.description || "" }} />
         </div>
       </article>
     </div>

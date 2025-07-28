@@ -34,7 +34,7 @@ export default async function PiesaPage() {
                 key={play.id}
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <Link href={`/piesa/${play.slug || play.id}`}>
+                <Link href={`/piesa/${play.id}`}>
                   <div className="relative h-48">
                     <Image
                       src={play.imageUrl || `/placeholder.svg?height=200&width=300`}

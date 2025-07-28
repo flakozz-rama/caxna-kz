@@ -8,7 +8,7 @@ import { QueryProvider } from "@/lib/providers"
 const inter = Inter({ subsets: ["latin", "cyrillic"] })
 
 export const metadata = {
-  title: "Қазақ мәдени порталы",
+  title: "Caxna.kz - Қазақ театр порталы",
   description: "Қазақстанның мәдени өмірі туралы ақпарат порталы",
     generator: 'v0.dev'
 }

@@ -1,17 +1,17 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, Calendar, MessageCircle, ThumbsUp, ArrowLeft } from "lucide-react"
-import { getOpinionBySlug } from "@/lib/api"
+import { ChevronRight, User, Calendar, ArrowLeft } from "lucide-react"
+import { getCommentById } from "@/lib/api"
 
-export default async function PikirlerDetailPage({ params }: { params: { slug: string } }) {
-  let opinion: any = null;
+export default async function PikirlersDetailPage({ params }: { params: { id: string } }) {
+  let comment: any = null;
   try {
-    opinion = await getOpinionBySlug(params.slug);
+    comment = await getCommentById(params.id);
   } catch (e) {
     // Можно добавить обработку ошибки
   }
 
-  if (!opinion) {
+  if (!comment) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
@@ -44,33 +44,29 @@ export default async function PikirlerDetailPage({ params }: { params: { slug: s
           Пікірлер
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-gray-900">{opinion.title}</span>
+        <span className="text-gray-900">{comment.title}</span>
       </nav>
 
       <article className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{opinion.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{comment.title}</h1>
 
           <div className="flex items-center space-x-6 text-gray-600 mb-6">
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
-              {opinion.createdAt ? new Date(opinion.createdAt).toLocaleDateString() : ""}
+              {comment.createdAt ? new Date(comment.createdAt).toLocaleDateString() : ""}
             </div>
             <div className="flex items-center">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              {opinion.commentsCount || 0} пікір
-            </div>
-            <div className="flex items-center">
-              <ThumbsUp className="w-4 h-4 mr-2" />
-              {opinion.likesCount || 0} ұнату
+              <User className="w-4 h-4 mr-2" />
+              {comment.author || "Оқырман"}
             </div>
           </div>
 
-          {opinion.imageUrl && (
+          {comment.imageUrl && (
             <div className="relative h-64 md:h-96 mb-8">
               <Image
-                src={opinion.imageUrl}
-                alt={opinion.title}
+                src={comment.imageUrl}
+                alt={comment.title}
                 fill
                 className="object-cover rounded-lg"
               />
@@ -79,15 +75,15 @@ export default async function PikirlerDetailPage({ params }: { params: { slug: s
         </header>
 
         <div className="prose prose-lg max-w-none mb-8">
-          <div dangerouslySetInnerHTML={{ __html: opinion.content || opinion.description || "" }} />
+          <div dangerouslySetInnerHTML={{ __html: comment.content || comment.text || "" }} />
         </div>
 
         {/* Comments section */}
         <div className="border-t pt-8">
           <h3 className="text-xl font-semibold mb-6">Пікірлер</h3>
-          {opinion.comments && opinion.comments.length > 0 ? (
+          {comment.comments && comment.comments.length > 0 ? (
             <div className="space-y-6">
-              {opinion.comments.map((comment: any, index: number) => (
+              {comment.comments.map((comment: any, index: number) => (
                 <div key={index} className="bg-gray-50 rounded-lg p-4">
                   <div className="flex items-center mb-2">
                     <div className="font-medium text-gray-900">{comment.author || `Оқырман ${index + 1}`}</div>

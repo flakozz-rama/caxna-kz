@@ -4,11 +4,40 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Eye, Calendar, User } from "lucide-react"
-import { useNews } from "@/lib/api"
+import { Plus, Edit, Eye, Calendar, User, Trash2 } from "lucide-react"
+import { useNews, useDeleteNews } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function NewsPage() {
   const { data: news, isLoading, error } = useNews();
+  const deleteNewsMutation = useDeleteNews();
+
+  const handleDelete = async (id: string, title: string) => {
+    try {
+      await deleteNewsMutation.mutateAsync(id);
+      toast({
+        title: "Сәтті!",
+        description: `"${title}" жаңалығы сәтті жойылды`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Қате!",
+        description: error.message || "Жаңалық жою кезінде қате орын алды",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return <div className="p-6">Жүктелуде...</div>;
@@ -69,6 +98,32 @@ export default function NewsPage() {
                         Өңдеу
                       </Button>
                     </Link>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Жою
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Жаңалықты жою</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Сіз шынымен "{item.title}" жаңалығын жойғыңыз келетініне сенімдісіз бе? 
+                            Бұл әрекетті к geri алмайды.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Болдырмау</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(item.id.toString(), item.title)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Жою
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
                 </div>
               </CardContent>

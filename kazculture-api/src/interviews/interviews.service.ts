@@ -33,13 +33,19 @@ export class InterviewsService {
     // Генерируем slug если не предоставлен или если он пустой
     if (!createInterviewDto.slug || !createInterviewDto.slug.trim()) {
       createInterviewDto.slug = this.generateSlug(createInterviewDto.title);
-      if (!createInterviewDto.slug) {
-        createInterviewDto.slug = uuidv4();
-      }
+    }
+
+    // Проверяем уникальность slug
+    let finalSlug = createInterviewDto.slug;
+    let counter = 1;
+    while (await this.interviewRepository.findOne({ where: { slug: finalSlug } })) {
+      finalSlug = `${createInterviewDto.slug}-${counter}`;
+      counter++;
     }
 
     const interview = this.interviewRepository.create({
       ...createInterviewDto,
+      slug: finalSlug,
       authorId,
       publishedAt:
         createInterviewDto.status === InterviewStatus.PUBLISHED
@@ -56,13 +62,12 @@ export class InterviewsService {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
     const queryBuilder = this.interviewRepository.createQueryBuilder('interview');
+    
+    // Если статус указан, фильтруем по нему, иначе показываем все
     if (status) {
       queryBuilder.where('interview.status = :status', { status });
-    } else {
-      queryBuilder.where('interview.status = :status', {
-        status: InterviewStatus.PUBLISHED,
-      });
     }
+    
     const [interviews, total] = await queryBuilder
       .orderBy('interview.createdAt', 'DESC')
       .skip(skip)

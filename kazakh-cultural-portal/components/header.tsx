@@ -15,7 +15,8 @@ export default function Header() {
     { href: "/zhanalyqtar", label: "Жаңалықтар" },
     { href: "/video", label: "Видеолар" },
     { href: "/suqbat", label: "Сұқбаттар" },
-    { href: "/arnaiy-zhobalar", label: "Арнайы жобалар" },
+    { href: "/piesa", label: "Пьесалар" },
+    { href: "/synshy-zhazbasy", label: "Сыншы жазбашылар" },
   ]
 
   return (
@@ -25,9 +26,9 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">Қ</span>
+              <span className="text-white font-bold text-sm">C</span>
             </div>
-            <span className="font-bold text-xl text-gray-900">Театр туралы портал</span>
+            <span className="font-bold text-xl text-gray-900">Caxna.kz</span>
           </Link>
 
           {/* Desktop Navigation */}

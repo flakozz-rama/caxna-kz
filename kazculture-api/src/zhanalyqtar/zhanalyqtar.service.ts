@@ -33,13 +33,19 @@ export class ZhanalyqtarService {
     // Генерируем slug если не предоставлен или если он пустой
     if (!createZhanalyqDto.slug || !createZhanalyqDto.slug.trim()) {
       createZhanalyqDto.slug = this.generateSlug(createZhanalyqDto.title);
-      if (!createZhanalyqDto.slug) {
-        createZhanalyqDto.slug = uuidv4();
-      }
+    }
+
+    // Проверяем уникальность slug
+    let finalSlug = createZhanalyqDto.slug;
+    let counter = 1;
+    while (await this.zhanalyqRepository.findOne({ where: { slug: finalSlug } })) {
+      finalSlug = `${createZhanalyqDto.slug}-${counter}`;
+      counter++;
     }
 
     const zhanalyq = this.zhanalyqRepository.create({
       ...createZhanalyqDto,
+      slug: finalSlug,
       authorId,
       publishedAt:
         createZhanalyqDto.status === ZhanalyqStatus.PUBLISHED
@@ -56,13 +62,12 @@ export class ZhanalyqtarService {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
     const queryBuilder = this.zhanalyqRepository.createQueryBuilder('zhanalyq');
+    
+    // Если статус указан, фильтруем по нему, иначе показываем все
     if (status) {
       queryBuilder.where('zhanalyq.status = :status', { status });
-    } else {
-      queryBuilder.where('zhanalyq.status = :status', {
-        status: ZhanalyqStatus.PUBLISHED,
-      });
     }
+    
     const [zhanalyqtar, total] = await queryBuilder
       .orderBy('zhanalyq.createdAt', 'DESC')
       .skip(skip)

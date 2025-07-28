@@ -6,11 +6,39 @@ import type {
   Video, 
   Interview, 
   User, 
-  SpecialProject, 
   LoginResponse, 
   DashboardStats,
   UploadResponse
 } from './axios';
+
+// Types for new entities
+export interface Play {
+  id: string;
+  title: string;
+  content: string;
+  status: "draft" | "published" | "pending";
+  views: number;
+  createdAt: string;
+  publishedAt?: string;
+  slug?: string;
+  imageUrl?: string;
+  tags?: string[];
+  authorId?: string;
+}
+
+export interface Review {
+  id: string;
+  title: string;
+  content: string;
+  status: "draft" | "published" | "pending";
+  views: number;
+  createdAt: string;
+  publishedAt?: string;
+  slug?: string;
+  imageUrl?: string;
+  tags?: string[];
+  authorId?: string;
+}
 
 // Auth API
 export const authApi = {
@@ -170,30 +198,59 @@ export const usersApi = {
   },
 };
 
-// Special Projects API
-export const specialProjectsApi = {
-  getAll: async (): Promise<SpecialProject[]> => {
-    const response = await axiosInstance.get<{data: SpecialProject[]}>('/arnaiy-zhobalar/admin');
-    return response.data.data || [];
+
+
+// Plays API
+export const playsApi = {
+  getAll: async (): Promise<Play[]> => {
+    const response = await axiosInstance.get<Play[]>('/plays/admin');
+    return response.data || [];
   },
   
-  getById: async (id: string): Promise<SpecialProject> => {
-    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/admin/${id}`);
+  getById: async (id: string): Promise<Play> => {
+    const response = await axiosInstance.get<Play>(`/plays/admin/${id}`);
     return response.data;
   },
   
-  create: async (data: Partial<SpecialProject>): Promise<SpecialProject> => {
-    const response = await axiosInstance.post<SpecialProject>('/arnaiy-zhobalar/admin', data);
+  create: async (data: Partial<Play>): Promise<Play> => {
+    const response = await axiosInstance.post<Play>('/plays', data);
     return response.data;
   },
   
-  update: async (id: string, data: Partial<SpecialProject>): Promise<SpecialProject> => {
-    const response = await axiosInstance.patch<SpecialProject>(`/arnaiy-zhobalar/admin/${id}`, data);
+  update: async (id: string, data: Partial<Play>): Promise<Play> => {
+    const response = await axiosInstance.patch<Play>(`/plays/${id}`, data);
     return response.data;
   },
   
   delete: async (id: string): Promise<void> => {
-    await axiosInstance.delete(`/arnaiy-zhobalar/admin/${id}`);
+    await axiosInstance.delete(`/plays/${id}`);
+  },
+};
+
+// Reviews API
+export const reviewsApi = {
+  getAll: async (): Promise<Review[]> => {
+    const response = await axiosInstance.get<Review[]>('/reviews/admin');
+    return response.data || [];
+  },
+  
+  getById: async (id: string): Promise<Review> => {
+    const response = await axiosInstance.get<Review>(`/reviews/admin/${id}`);
+    return response.data;
+  },
+  
+  create: async (data: Partial<Review>): Promise<Review> => {
+    const response = await axiosInstance.post<Review>('/reviews', data);
+    return response.data;
+  },
+  
+  update: async (id: string, data: Partial<Review>): Promise<Review> => {
+    const response = await axiosInstance.patch<Review>(`/reviews/${id}`, data);
+    return response.data;
+  },
+  
+  delete: async (id: string): Promise<void> => {
+    await axiosInstance.delete(`/reviews/${id}`);
   },
 };
 
@@ -201,13 +258,14 @@ export const specialProjectsApi = {
 export const dashboardApi = {
   getStats: async (): Promise<DashboardStats> => {
     try {
-      const [articles, news, videos, interviews, users, projects] = await Promise.all([
+      const [articles, news, videos, interviews, users, plays, reviews] = await Promise.all([
         articlesApi.getAll(),
         newsApi.getAll(),
         videosApi.getAll(),
         interviewsApi.getAll(),
         usersApi.getAll(),
-        specialProjectsApi.getAll(),
+        playsApi.getAll(),
+        reviewsApi.getAll(),
       ]);
 
       return {
@@ -216,11 +274,14 @@ export const dashboardApi = {
         videosCount: videos.length,
         interviewsCount: interviews.length,
         usersCount: users.length,
-        projectsCount: projects.length,
-        totalViews: articles.reduce((sum, article) => sum + (article.views || 0), 0) +
-                   news.reduce((sum, item) => sum + (item.views || 0), 0) +
-                   videos.reduce((sum, video) => sum + (video.views || 0), 0) +
-                   interviews.reduce((sum, interview) => sum + (interview.views || 0), 0),
+        playsCount: plays.length,
+        reviewsCount: reviews.length,
+        totalViews: articles.reduce((sum: number, article: any) => sum + (article.views || 0), 0) +
+                   news.reduce((sum: number, item: any) => sum + (item.views || 0), 0) +
+                   videos.reduce((sum: number, video: any) => sum + (video.views || 0), 0) +
+                   interviews.reduce((sum: number, interview: any) => sum + (interview.views || 0), 0) +
+                   plays.reduce((sum: number, play: any) => sum + (play.views || 0), 0) +
+                   reviews.reduce((sum: number, review: any) => sum + (review.views || 0), 0),
       };
     } catch (error) {
       console.error('Failed to fetch dashboard stats:', error);
@@ -230,7 +291,8 @@ export const dashboardApi = {
         videosCount: 0,
         interviewsCount: 0,
         usersCount: 0,
-        projectsCount: 0,
+        playsCount: 0,
+        reviewsCount: 0,
         totalViews: 0,
       };
     }
@@ -249,8 +311,11 @@ export const queryKeys = {
   interview: (id: string) => ['interviews', id] as const,
   users: ['users'] as const,
   user: (id: string) => ['users', id] as const,
-  specialProjects: ['specialProjects'] as const,
-  specialProject: (id: string) => ['specialProjects', id] as const,
+
+  plays: ['plays'] as const,
+  play: (id: string) => ['plays', id] as const,
+  reviews: ['reviews'] as const,
+  review: (id: string) => ['reviews', id] as const,
   dashboardStats: ['dashboardStats'] as const,
 };
 
@@ -330,17 +395,34 @@ export const useUser = (id: string) => {
   });
 };
 
-export const useSpecialProjects = () => {
+
+
+export const usePlays = () => {
   return useQuery({
-    queryKey: queryKeys.specialProjects,
-    queryFn: specialProjectsApi.getAll,
+    queryKey: queryKeys.plays,
+    queryFn: playsApi.getAll,
   });
 };
 
-export const useSpecialProject = (id: string) => {
+export const usePlay = (id: string) => {
   return useQuery({
-    queryKey: queryKeys.specialProject(id),
-    queryFn: () => specialProjectsApi.getById(id),
+    queryKey: queryKeys.play(id),
+    queryFn: () => playsApi.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useReviews = () => {
+  return useQuery({
+    queryKey: queryKeys.reviews,
+    queryFn: reviewsApi.getAll,
+  });
+};
+
+export const useReview = (id: string) => {
+  return useQuery({
+    queryKey: queryKeys.review(id),
+    queryFn: () => reviewsApi.getById(id),
     enabled: !!id,
   });
 };
@@ -493,37 +575,85 @@ export const useDeleteInterview = () => {
   });
 };
 
-export const useCreateSpecialProject = () => {
+
+
+export const useCreatePlay = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: specialProjectsApi.create,
+    mutationFn: playsApi.create,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.specialProjects });
+      queryClient.invalidateQueries({ queryKey: queryKeys.plays });
     },
   });
 };
 
-export const useUpdateSpecialProject = () => {
+export const useUpdatePlay = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<SpecialProject> }) => 
-      specialProjectsApi.update(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<Play> }) => 
+      playsApi.update(id, data),
     onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.specialProjects });
-      queryClient.invalidateQueries({ queryKey: queryKeys.specialProject(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.plays });
+      queryClient.invalidateQueries({ queryKey: queryKeys.play(id) });
     },
   });
 };
 
-export const useDeleteSpecialProject = () => {
+export const useDeletePlay = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: specialProjectsApi.delete,
+    mutationFn: playsApi.delete,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.specialProjects });
+      queryClient.invalidateQueries({ queryKey: queryKeys.plays });
+    },
+  });
+};
+
+export const useCreateReview = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: reviewsApi.create,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.reviews });
+    },
+  });
+};
+
+export const useUpdateReview = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Review> }) => 
+      reviewsApi.update(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.reviews });
+      queryClient.invalidateQueries({ queryKey: queryKeys.review(id) });
+    },
+  });
+};
+
+export const useDeleteReview = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: reviewsApi.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.reviews });
+    },
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: usersApi.delete,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users });
     },
   });
 };
@@ -561,9 +691,5 @@ export const getUserById = usersApi.getById;
 export const createUser = usersApi.create;
 export const updateUser = usersApi.update;
 export const deleteUser = usersApi.delete;
-export const getSpecialProjects = specialProjectsApi.getAll;
-export const getSpecialProjectById = specialProjectsApi.getById;
-export const createSpecialProject = specialProjectsApi.create;
-export const updateSpecialProject = specialProjectsApi.update;
-export const deleteSpecialProject = specialProjectsApi.delete;
+
 export const getDashboardStats = dashboardApi.getStats; 

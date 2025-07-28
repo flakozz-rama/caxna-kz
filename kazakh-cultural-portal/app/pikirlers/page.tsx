@@ -34,7 +34,7 @@ export default async function PikirlerPage() {
                 key={opinion.id}
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <Link href={`/pikirlers/${opinion.slug || opinion.id}`} className="block">
+                <Link href={`/pikirlers/${opinion.id}`} className="block">
                   <div className="flex gap-6 p-6">
                     <div className="relative w-32 h-24 flex-shrink-0">
                       <Image

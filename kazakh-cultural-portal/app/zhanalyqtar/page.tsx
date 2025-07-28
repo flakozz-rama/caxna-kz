@@ -34,7 +34,7 @@ export default async function ZhanalyqtarPage() {
                 key={item.id}
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <Link href={`/zhanalyqtar/${item.slug || item.id}`} className="block">
+                <Link href={`/zhanalyqtar/${item.id}`} className="block">
                   <div className="flex gap-6 p-6">
                     <div className="relative w-48 h-32 flex-shrink-0">
                       <Image

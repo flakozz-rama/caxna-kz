@@ -1,23 +1,23 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, Calendar, Clock, ArrowLeft } from "lucide-react"
-import { getNewsBySlug } from "@/lib/api"
+import { ChevronRight, Calendar, User, ArrowLeft } from "lucide-react"
+import { getArticleById } from "@/lib/api"
 
-export default async function ZhanalyqDetailPage({ params }: { params: { slug: string } }) {
-  let news: any = null;
+export default async function MaqalaDetailPage({ params }: { params: { id: string } }) {
+  let article: any = null;
   try {
-    news = await getNewsBySlug(params.slug);
+    article = await getArticleById(params.id);
   } catch (e) {
     // Можно добавить обработку ошибки
   }
 
-  if (!news) {
+  if (!article) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Жаңалық табылмады</h1>
-          <Link href="/zhanalyqtar" className="text-blue-600 hover:text-blue-800">
-            Жаңалықтарға оралу
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Мақала табылмады</h1>
+          <Link href="/maqala" className="text-blue-600 hover:text-blue-800">
+            Мақалаларға оралу
           </Link>
         </div>
       </div>
@@ -28,9 +28,9 @@ export default async function ZhanalyqDetailPage({ params }: { params: { slug: s
     <div className="container mx-auto px-4 py-8">
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link href="/zhanalyqtar" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+        <Link href="/maqala" className="inline-flex items-center text-blue-600 hover:text-blue-800">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Жаңалықтарға оралу
+          Мақалаларға оралу
         </Link>
       </div>
 
@@ -40,33 +40,33 @@ export default async function ZhanalyqDetailPage({ params }: { params: { slug: s
           Басты бет
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <Link href="/zhanalyqtar" className="hover:text-blue-600">
-          Жаңалықтар
+        <Link href="/maqala" className="hover:text-blue-600">
+          Мақала
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-gray-900">{news.title}</span>
+        <span className="text-gray-900">{article.title}</span>
       </nav>
 
       <article className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{news.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{article.title}</h1>
 
           <div className="flex items-center space-x-6 text-gray-600 mb-6">
             <div className="flex items-center">
-              <Calendar className="w-4 h-4 mr-2" />
-              {news.createdAt ? new Date(news.createdAt).toLocaleDateString() : ""}
+              <User className="w-4 h-4 mr-2" />
+              {article.author || "Мақала авторы"}
             </div>
             <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-2" />
-              {news.readTime || "5 минут"}
+              <Calendar className="w-4 h-4 mr-2" />
+              {article.createdAt ? new Date(article.createdAt).toLocaleDateString() : ""}
             </div>
           </div>
 
-          {news.imageUrl && (
+          {article.imageUrl && (
             <div className="relative h-64 md:h-96 mb-8">
               <Image
-                src={news.imageUrl}
-                alt={news.title}
+                src={article.imageUrl}
+                alt={article.title}
                 fill
                 className="object-cover rounded-lg"
               />
@@ -75,7 +75,7 @@ export default async function ZhanalyqDetailPage({ params }: { params: { slug: s
         </header>
 
         <div className="prose prose-lg max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: news.content || news.description || "" }} />
+          <div dangerouslySetInnerHTML={{ __html: article.content || article.description || "" }} />
         </div>
       </article>
     </div>

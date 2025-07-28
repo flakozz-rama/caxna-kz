@@ -24,12 +24,19 @@ export class VideosService {
     // Генерируем slug если не предоставлен или если он пустой
     if (!createVideoDto.slug || !createVideoDto.slug.trim()) {
       createVideoDto.slug = this.generateSlug(createVideoDto.title);
-      if (!createVideoDto.slug) {
-        createVideoDto.slug = uuidv4();
-      }
     }
+    
+    // Проверяем уникальность slug
+    let finalSlug = createVideoDto.slug;
+    let counter = 1;
+    while (await this.videoRepository.findOne({ where: { slug: finalSlug } })) {
+      finalSlug = `${createVideoDto.slug}-${counter}`;
+      counter++;
+    }
+    
     const video = this.videoRepository.create({
       ...createVideoDto,
+      slug: finalSlug,
       authorId,
       publishedAt:
         createVideoDto.status === VideoStatus.PUBLISHED ? new Date() : null,
@@ -44,13 +51,12 @@ export class VideosService {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
     const queryBuilder = this.videoRepository.createQueryBuilder('video');
+    
+    // Если статус указан, фильтруем по нему, иначе показываем все
     if (status) {
       queryBuilder.where('video.status = :status', { status });
-    } else {
-      queryBuilder.where('video.status = :status', {
-        status: VideoStatus.PUBLISHED,
-      });
     }
+    
     const [videos, total] = await queryBuilder
       .orderBy('video.createdAt', 'DESC')
       .skip(skip)

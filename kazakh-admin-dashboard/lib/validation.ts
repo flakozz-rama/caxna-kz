@@ -79,6 +79,32 @@ export const specialProjectSchema = z.object({
 export const createSpecialProjectSchema = specialProjectSchema;
 export const updateSpecialProjectSchema = specialProjectSchema.partial();
 
+// Схемы валидации для пьес
+export const playSchema = z.object({
+  title: z.string().min(1, 'Тақырып міндетті').max(500, 'Тақырып 500 таңбадан аспауы керек'),
+  content: z.string().min(1, 'Мазмұн міндетті'),
+  slug: z.string().optional(),
+  imageUrl: z.string().url('URL форматы дұрыс емес').optional().or(z.literal('')),
+  status: z.enum(['draft', 'published', 'pending']).default('draft'),
+  tags: z.array(z.string()).optional(),
+});
+
+export const createPlaySchema = playSchema;
+export const updatePlaySchema = playSchema.partial();
+
+// Схемы валидации для рецензий
+export const reviewSchema = z.object({
+  title: z.string().min(1, 'Тақырып міндетті').max(500, 'Тақырып 500 таңбадан аспауы керек'),
+  content: z.string().min(1, 'Мазмұн міндетті'),
+  slug: z.string().optional(),
+  imageUrl: z.string().url('URL форматы дұрыс емес').optional().or(z.literal('')),
+  status: z.enum(['draft', 'published', 'pending']).default('draft'),
+  tags: z.array(z.string()).optional(),
+});
+
+export const createReviewSchema = reviewSchema;
+export const updateReviewSchema = reviewSchema.partial();
+
 // Схема валидации для входа
 export const loginSchema = z.object({
   email: z.string().email('Неверный формат email'),
@@ -119,5 +145,9 @@ export type CreateInterviewData = z.infer<typeof createInterviewSchema>;
 export type UpdateInterviewData = z.infer<typeof updateInterviewSchema>;
 export type CreateSpecialProjectData = z.infer<typeof createSpecialProjectSchema>;
 export type UpdateSpecialProjectData = z.infer<typeof updateSpecialProjectSchema>;
+export type CreatePlayData = z.infer<typeof createPlaySchema>;
+export type UpdatePlayData = z.infer<typeof updatePlaySchema>;
+export type CreateReviewData = z.infer<typeof createReviewSchema>;
+export type UpdateReviewData = z.infer<typeof updateReviewSchema>;
 export type LoginData = z.infer<typeof loginSchema>;
 export type UploadFileData = z.infer<typeof uploadFileSchema>; 

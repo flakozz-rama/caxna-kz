@@ -26,6 +26,7 @@ import {
 } from '../common/dto/pagination.dto';
 import { ArnaiyZhobala } from './entities/arnaiy-zhobala.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ArnaiyZhobalaStatus } from './entities/arnaiy-zhobala.entity';
 
 @ApiTags('ArnaiyZhobalar')
 @Controller('arnaiy-zhobalar')
@@ -80,14 +81,16 @@ export class ArnaiyZhobalarController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @Get('admin')
-  @ApiOperation({ summary: 'Get all special events (Admin only)' })
-  @ApiResponse({ status: 200, description: 'List of all special events' })
+  @ApiOperation({ summary: 'Get all special projects (Admin only)' })
+  @ApiResponse({ status: 200, description: 'List of all special projects' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAllAdmin(
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<ArnaiyZhobala>> {
-    return this.arnaiyZhobalarService.findAll(paginationDto, status as any);
+    // Если статус не передан, показываем все проекты (включая черновики)
+    const projectStatus = status ? (status as ArnaiyZhobalaStatus) : undefined;
+    return this.arnaiyZhobalarService.findAll(paginationDto, projectStatus);
   }
 
   @UseGuards(JwtAuthGuard)

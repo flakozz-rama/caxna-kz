@@ -36,13 +36,19 @@ export class ArnaiyZhobalarService {
     // Генерируем slug если не предоставлен или если он пустой
     if (!createArnaiyZhobalaDto.slug || !createArnaiyZhobalaDto.slug.trim()) {
       createArnaiyZhobalaDto.slug = this.generateSlug(createArnaiyZhobalaDto.title);
-      if (!createArnaiyZhobalaDto.slug) {
-        createArnaiyZhobalaDto.slug = uuidv4();
-      }
+    }
+
+    // Проверяем уникальность slug
+    let finalSlug = createArnaiyZhobalaDto.slug;
+    let counter = 1;
+    while (await this.arnaiyZhobalaRepository.findOne({ where: { slug: finalSlug } })) {
+      finalSlug = `${createArnaiyZhobalaDto.slug}-${counter}`;
+      counter++;
     }
 
     const arnaiyZhobala = this.arnaiyZhobalaRepository.create({
       ...createArnaiyZhobalaDto,
+      slug: finalSlug,
       authorId,
       publishedAt:
         createArnaiyZhobalaDto.status === ArnaiyZhobalaStatus.PUBLISHED
@@ -59,13 +65,12 @@ export class ArnaiyZhobalarService {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
     const queryBuilder = this.arnaiyZhobalaRepository.createQueryBuilder('arnaiyZhobala');
+    
+    // Если статус указан, фильтруем по нему, иначе показываем все
     if (status) {
       queryBuilder.where('arnaiyZhobala.status = :status', { status });
-    } else {
-      queryBuilder.where('arnaiyZhobala.status = :status', {
-        status: ArnaiyZhobalaStatus.PUBLISHED,
-      });
     }
+    
     const [arnaiyZhobalar, total] = await queryBuilder
       .orderBy('arnaiyZhobala.eventDate', 'ASC')
       .skip(skip)

@@ -5,7 +5,6 @@ import type {
   News, 
   Video, 
   Interview, 
-  SpecialProject,
   SearchResult
 } from './axios';
 
@@ -96,28 +95,7 @@ export const interviewsApi = {
   },
 };
 
-// Special Projects API
-export const specialProjectsApi = {
-  getAll: async (): Promise<SpecialProject[]> => {
-    const response = await axiosInstance.get<PaginatedResponse<SpecialProject>>('/arnaiy-zhobalar');
-    return response.data.data || [];
-  },
-  
-  getById: async (id: string): Promise<SpecialProject> => {
-    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/${id}`);
-    return response.data;
-  },
-  
-  getBySlug: async (slug: string): Promise<SpecialProject> => {
-    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/${slug}`);
-    return response.data;
-  },
 
-  getFeatured: async (): Promise<SpecialProject[]> => {
-    const response = await axiosInstance.get<SpecialProject[]>('/arnaiy-zhobalar/featured');
-    return response.data;
-  },
-};
 
 // Search API
 export const searchApi = {
@@ -144,10 +122,7 @@ export const queryKeys = {
   interview: (id: string) => ['interviews', id] as const,
   interviewBySlug: (slug: string) => ['interviews', 'slug', slug] as const,
   featuredInterviews: ['interviews', 'featured'] as const,
-  specialProjects: ['specialProjects'] as const,
-  specialProject: (id: string) => ['specialProjects', id] as const,
-  specialProjectBySlug: (slug: string) => ['specialProjects', 'slug', slug] as const,
-  featuredSpecialProjects: ['specialProjects', 'featured'] as const,
+
   search: (query: string) => ['search', query] as const,
 };
 
@@ -264,35 +239,7 @@ export const useFeaturedInterviews = () => {
   });
 };
 
-export const useSpecialProjects = () => {
-  return useQuery({
-    queryKey: queryKeys.specialProjects,
-    queryFn: specialProjectsApi.getAll,
-  });
-};
 
-export const useSpecialProject = (id: string) => {
-  return useQuery({
-    queryKey: queryKeys.specialProject(id),
-    queryFn: () => specialProjectsApi.getById(id),
-    enabled: !!id,
-  });
-};
-
-export const useSpecialProjectBySlug = (slug: string) => {
-  return useQuery({
-    queryKey: queryKeys.specialProjectBySlug(slug),
-    queryFn: () => specialProjectsApi.getBySlug(slug),
-    enabled: !!slug,
-  });
-};
-
-export const useFeaturedSpecialProjects = () => {
-  return useQuery({
-    queryKey: queryKeys.featuredSpecialProjects,
-    queryFn: specialProjectsApi.getFeatured,
-  });
-};
 
 export const useSearch = (query: string) => {
   return useQuery({
@@ -304,7 +251,10 @@ export const useSearch = (query: string) => {
 
 // Экспортируем старые функции для обратной совместимости
 export const getArticles = articlesApi.getAll;
-export const getArticleById = articlesApi.getById;
+export const getArticleById = async (id: string): Promise<Article> => {
+  const response = await axiosInstance.get<Article>(`/articles/id/${id}`);
+  return response.data;
+};
 export const getArticleBySlug = async (slug: string): Promise<Article> => {
   const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
   if (isUuid) {
@@ -316,7 +266,10 @@ export const getArticleBySlug = async (slug: string): Promise<Article> => {
   }
 };
 export const getNews = newsApi.getAll;
-export const getNewsById = newsApi.getById;
+export const getNewsById = async (id: string): Promise<News> => {
+  const response = await axiosInstance.get<News>(`/zhanalyqtar/id/${id}`);
+  return response.data;
+};
 export const getNewsBySlug = async (slug: string): Promise<News> => {
   const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
   if (isUuid) {
@@ -341,28 +294,17 @@ export const getInterviewBySlug = async (slug: string): Promise<Interview> => {
     return response.data;
   }
 };
-export const getSpecialProjects = specialProjectsApi.getAll;
-export const getSpecialProjectById = specialProjectsApi.getById;
-export const getSpecialProjectBySlug = async (slug: string): Promise<SpecialProject> => {
-  const isUuid = /^[0-9a-fA-F-]{36}$/.test(slug);
-  if (isUuid) {
-    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/id/${slug}`);
-    return response.data;
-  } else {
-    const response = await axiosInstance.get<SpecialProject>(`/arnaiy-zhobalar/${slug}`);
-    return response.data;
-  }
-};
 
-// Заглушки для функций, которые не реализованы в API
+
+// Функции для пьес и рецензий
 export const getPlays = async () => {
-  // Заглушка для пьес - пока не реализовано в API
-  return [];
+  const response = await axiosInstance.get<any[]>('/plays');
+  return response.data || [];
 };
 
 export const getPlayBySlug = async (slug: string) => {
-  // Заглушка для пьесы по slug
-  throw new Error('Пьесы пока не поддерживаются в API');
+  const response = await axiosInstance.get<any>(`/plays/slug/${slug}`);
+  return response.data;
 };
 
 export const getOpinions = async () => {
@@ -376,11 +318,27 @@ export const getOpinionBySlug = async (slug: string) => {
 };
 
 export const getReviews = async () => {
-  // Заглушка для рецензий - пока не реализовано в API
-  return [];
+  const response = await axiosInstance.get<any[]>('/reviews');
+  return response.data || [];
 };
 
 export const getReviewBySlug = async (slug: string) => {
-  // Заглушка для рецензии по slug
-  throw new Error('Рецензии пока не поддерживаются в API');
+  const response = await axiosInstance.get<any>(`/reviews/slug/${slug}`);
+  return response.data;
+}; 
+
+export const getPlayById = async (id: string) => {
+  const response = await axiosInstance.get<any>(`/plays/id/${id}`);
+  return response.data;
+};
+
+export const getReviewById = async (id: string) => {
+  const response = await axiosInstance.get<any>(`/reviews/id/${id}`);
+  return response.data;
+};
+
+export const getCommentById = async (id: string) => {
+  // TODO: Replace with real API call when available
+  // Example: const response = await axiosInstance.get<Comment>(`/pikirlers/${id}`);
+  throw new Error('Пікірлер по id пока не поддерживаются в API');
 }; 

@@ -34,7 +34,7 @@ export default async function MaqalaPage() {
                 key={article.id}
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <Link href={`/maqala/${article.slug || article.id}`}>
+                <Link href={`/maqala/${article.id}`}>
                   <div className="relative h-48">
                     <Image
                       src={article.imageUrl || "/placeholder.svg?height=200&width=300"}

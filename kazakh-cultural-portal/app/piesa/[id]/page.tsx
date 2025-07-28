@@ -1,23 +1,23 @@
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronRight, User, Calendar, Clock, ArrowLeft } from "lucide-react"
-import { getInterviewBySlug } from "@/lib/api"
+import { ChevronRight, Calendar, MapPin, Users, ArrowLeft } from "lucide-react"
+import { getPlayById } from "@/lib/api"
 
-export default async function SuqbatDetailPage({ params }: { params: { slug: string } }) {
-  let interview: any = null;
+export default async function PiesaDetailPage({ params }: { params: { id: string } }) {
+  let play: any = null;
   try {
-    interview = await getInterviewBySlug(params.slug);
+    play = await getPlayById(params.id);
   } catch (e) {
     // Можно добавить обработку ошибки
   }
 
-  if (!interview) {
+  if (!play) {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center py-12">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Сұқбат табылмады</h1>
-          <Link href="/suqbat" className="text-blue-600 hover:text-blue-800">
-            Сұқбаттарға оралу
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Пьеса табылмады</h1>
+          <Link href="/piesa" className="text-blue-600 hover:text-blue-800">
+            Пьесаларға оралу
           </Link>
         </div>
       </div>
@@ -28,9 +28,9 @@ export default async function SuqbatDetailPage({ params }: { params: { slug: str
     <div className="container mx-auto px-4 py-8">
       {/* Back Navigation */}
       <div className="mb-6">
-        <Link href="/suqbat" className="inline-flex items-center text-blue-600 hover:text-blue-800">
+        <Link href="/piesa" className="inline-flex items-center text-blue-600 hover:text-blue-800">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Сұқбаттарға оралу
+          Пьесаларға оралу
         </Link>
       </div>
 
@@ -40,37 +40,37 @@ export default async function SuqbatDetailPage({ params }: { params: { slug: str
           Басты бет
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <Link href="/suqbat" className="hover:text-blue-600">
-          Сұқбат
+        <Link href="/piesa" className="hover:text-blue-600">
+          Пьеса
         </Link>
         <ChevronRight className="w-4 h-4" />
-        <span className="text-gray-900">{interview.title}</span>
+        <span className="text-gray-900">{play.title}</span>
       </nav>
 
       <article className="max-w-4xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{interview.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{play.title}</h1>
 
           <div className="flex items-center space-x-6 text-gray-600 mb-6">
             <div className="flex items-center">
-              <User className="w-4 h-4 mr-2" />
-              {interview.interviewee || interview.author || "Сұқбаттасушы"}
+              <MapPin className="w-4 h-4 mr-2" />
+              {play.theater || play.location || "Театр"}
             </div>
             <div className="flex items-center">
               <Calendar className="w-4 h-4 mr-2" />
-              {interview.createdAt ? new Date(interview.createdAt).toLocaleDateString() : ""}
+              {play.createdAt ? new Date(play.createdAt).toLocaleDateString() : ""}
             </div>
             <div className="flex items-center">
-              <Clock className="w-4 h-4 mr-2" />
-              {interview.duration || interview.readTime || "10 минут"}
+              <Users className="w-4 h-4 mr-2" />
+              {play.actorsCount || play.castSize || "5"} актер
             </div>
           </div>
 
-          {interview.imageUrl && (
+          {play.imageUrl && (
             <div className="relative h-64 md:h-96 mb-8">
               <Image
-                src={interview.imageUrl}
-                alt={interview.title}
+                src={play.imageUrl}
+                alt={play.title}
                 fill
                 className="object-cover rounded-lg"
               />
@@ -79,7 +79,7 @@ export default async function SuqbatDetailPage({ params }: { params: { slug: str
         </header>
 
         <div className="prose prose-lg max-w-none">
-          <div dangerouslySetInnerHTML={{ __html: interview.content || interview.description || "" }} />
+          <div dangerouslySetInnerHTML={{ __html: play.content || play.description || "" }} />
         </div>
       </article>
     </div>

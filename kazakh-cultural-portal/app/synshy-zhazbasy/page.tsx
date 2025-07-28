@@ -34,7 +34,7 @@ export default async function SynshyZhazbasPage() {
                 key={review.id}
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <Link href={`/synshy-zhazbasy/${review.slug || review.id}`}>
+                <Link href={`/synshy-zhazbasy/${review.id}`}>
                   <div className="relative h-48">
                     <Image
                       src={review.imageUrl || `/placeholder.svg?height=200&width=300`}

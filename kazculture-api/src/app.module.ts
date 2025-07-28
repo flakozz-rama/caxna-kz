@@ -14,6 +14,8 @@ import { Video } from './videos/entities/video.entity';
 import { Interview } from './interviews/entities/interview.entity';
 import { Zhanalyq } from './zhanalyqtar/entities/zhanalyq.entity';
 import { ArnaiyZhobala } from './arnaiy-zhobalar/entities/arnaiy-zhobala.entity';
+import { Play } from './plays/entities/play.entity';
+import { Review } from './reviews/entities/review.entity';
 
 // Modules
 import { AuthModule } from './auth/auth.module';
@@ -23,6 +25,8 @@ import { VideosModule } from './videos/videos.module';
 import { InterviewsModule } from './interviews/interviews.module';
 import { ZhanalyqtarModule } from './zhanalyqtar/zhanalyqtar.module';
 import { ArnaiyZhobalarModule } from './arnaiy-zhobalar/arnaiy-zhobalar.module';
+import { PlaysModule } from './plays/plays.module';
+import { ReviewsModule } from './reviews/reviews.module';
 import { UploadsModule } from './uploads/uploads.module';
 
 @Module({
@@ -43,7 +47,7 @@ import { UploadsModule } from './uploads/uploads.module';
         username: configService.get('database.username'),
         password: configService.get('database.password'),
         database: configService.get('database.database'),
-        entities: [User, Article, Video, Interview, Zhanalyq, ArnaiyZhobala],
+        entities: [User, Article, Video, Interview, Zhanalyq, ArnaiyZhobala, Play, Review],
         synchronize: configService.get('nodeEnv') === 'development',
         logging: configService.get('nodeEnv') === 'development',
       }),
@@ -63,6 +67,8 @@ import { UploadsModule } from './uploads/uploads.module';
     InterviewsModule,
     ZhanalyqtarModule,
     ArnaiyZhobalarModule,
+    PlaysModule,
+    ReviewsModule,
     UploadsModule,
   ],
 })

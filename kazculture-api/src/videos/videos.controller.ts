@@ -25,6 +25,7 @@ import {
 } from '../common/dto/pagination.dto';
 import { Video } from './entities/video.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { VideoStatus } from './entities/video.entity';
 
 @ApiTags('Videos')
 @Controller('videos')
@@ -74,7 +75,9 @@ export class VideosController {
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<Video>> {
-    return this.videosService.findAll(paginationDto, status as any);
+    // Если статус не передан, показываем все видео (включая черновики)
+    const videoStatus = status ? (status as VideoStatus) : undefined;
+    return this.videosService.findAll(paginationDto, videoStatus);
   }
 
   @UseGuards(JwtAuthGuard)

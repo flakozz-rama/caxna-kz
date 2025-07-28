@@ -5,10 +5,39 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, User } from "lucide-react"
-import { useUsers } from "@/lib/api"
+import { useUsers, useDeleteUser } from "@/lib/api"
+import { toast } from "@/hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function UsersPage() {
   const { data: users, isLoading, error } = useUsers();
+  const deleteUserMutation = useDeleteUser();
+
+  const handleDelete = async (id: string, name: string) => {
+    try {
+      await deleteUserMutation.mutateAsync(id);
+      toast({
+        title: "Сәтті!",
+        description: `"${name}" пайдаланушысы сәтті жойылды`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Қате!",
+        description: error.message || "Пайдаланушы жою кезінде қате орын алды",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (isLoading) {
     return <div className="p-6">Жүктелуде...</div>;
@@ -87,10 +116,32 @@ export default function UsersPage() {
                         Өңдеу
                       </Button>
                     </Link>
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 ml-2">
-                      <Trash2 className="w-4 h-4 mr-1" />
-                      Жою
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 ml-2">
+                          <Trash2 className="w-4 h-4 mr-1" />
+                          Жою
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Пайдаланушыны жою</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Сіз шынымен "{user.name || user.email}" пайдаланушысын жойғыңыз келетініне сенімдісіз бе? 
+                            Бұл әрекетті к geri алмайды.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Болдырмау</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDelete(user.id.toString(), user.name || user.email)}
+                            className="bg-red-600 hover:bg-red-700"
+                          >
+                            Жою
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </td>
                 </tr>
               ))}

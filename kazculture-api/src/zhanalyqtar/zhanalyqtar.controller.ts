@@ -26,6 +26,7 @@ import {
 } from '../common/dto/pagination.dto';
 import { Zhanalyq } from './entities/zhanalyq.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ZhanalyqStatus } from './entities/zhanalyq.entity';
 
 @ApiTags('Zhanalyqtar')
 @Controller('zhanalyqtar')
@@ -84,7 +85,9 @@ export class ZhanalyqtarController {
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<Zhanalyq>> {
-    return this.zhanalyqtarService.findAll(paginationDto, status as any);
+    // Если статус не передан, показываем все новости (включая черновики)
+    const zhanalyqStatus = status ? (status as ZhanalyqStatus) : undefined;
+    return this.zhanalyqtarService.findAll(paginationDto, zhanalyqStatus);
   }
 
   @UseGuards(JwtAuthGuard)

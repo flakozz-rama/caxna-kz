@@ -1,7 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, Video, MessageCircle, Eye } from "lucide-react"
+import { FileText, Video, MessageCircle, Eye, BookOpen, Star } from "lucide-react"
 import { useDashboardStats } from "@/lib/api"
 
 export default function AdminDashboard() {
@@ -15,7 +15,7 @@ export default function AdminDashboard() {
           <p className="text-gray-600 mt-1">Мәдени портал басқару панелі</p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(4)].map((_, i) => (
+          {[...Array(6)].map((_, i) => (
             <Card key={i} className="border-0 shadow-sm">
               <CardContent className="p-6">
                 <div className="animate-pulse">
@@ -47,20 +47,22 @@ export default function AdminDashboard() {
   }
 
   const statsData = [
-    { title: "Барлық мақалалар", value: stats?.articlesCount.toString() || "0", icon: FileText, color: "bg-blue-500" },
-    { title: "Видеолар", value: stats?.videosCount.toString() || "0", icon: Video, color: "bg-green-500" },
-    { title: "Сұқбаттар", value: stats?.interviewsCount.toString() || "0", icon: MessageCircle, color: "bg-purple-500" },
-    { title: "Жалпы көрулер", value: stats?.totalViews.toLocaleString() || "0", icon: Eye, color: "bg-orange-500" },
+    { title: "Барлық мақалалар", value: (stats?.articlesCount || 0).toString(), icon: FileText, color: "bg-blue-500" },
+    { title: "Видеолар", value: (stats?.videosCount || 0).toString(), icon: Video, color: "bg-green-500" },
+    { title: "Сұқбаттар", value: (stats?.interviewsCount || 0).toString(), icon: MessageCircle, color: "bg-purple-500" },
+    { title: "Пьесалар", value: (stats?.playsCount || 0).toString(), icon: BookOpen, color: "bg-indigo-500" },
+    { title: "Сыншы жазбашылар", value: (stats?.reviewsCount || 0).toString(), icon: Star, color: "bg-yellow-500" },
+    { title: "Жалпы көрулер", value: (stats?.totalViews || 0).toLocaleString(), icon: Eye, color: "bg-orange-500" },
   ];
 
   return (
     <div className="p-6 space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Басты бет</h1>
-        <p className="text-gray-600 mt-1">Мәдени портал басқару панелі</p>
+        <p className="text-gray-600 mt-1">CAXNA.KZ мәдени портал басқару панелі</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {statsData.map((stat, index) => (
           <Card key={index} className="border-0 shadow-sm hover:shadow-md transition-shadow">
             <CardContent className="p-6">
@@ -109,20 +111,25 @@ export default function AdminDashboard() {
                   <td className="p-4"><a href="/admin/suqbattar" className="text-blue-600 hover:underline">Өту</a></td>
                 </tr>
                 <tr>
-                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-yellow-500" /> Жаңалықтар</td>
-                  <td className="p-4 font-bold">{stats?.newsCount ?? 0}</td>
-                  <td className="p-4"><a href="/admin/zhanalyqtar" className="text-blue-600 hover:underline">Өту</a></td>
+                  <td className="p-4 flex items-center gap-2"><BookOpen className="w-5 h-5 text-indigo-500" /> Пьесалар</td>
+                  <td className="p-4 font-bold">{stats?.playsCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/piesa" className="text-blue-600 hover:underline">Өту</a></td>
                 </tr>
                 <tr>
-                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-pink-500" /> Арнайы жобалар</td>
-                  <td className="p-4 font-bold">{stats?.projectsCount ?? 0}</td>
-                  <td className="p-4"><a href="/admin/arnaiy-zhobalar" className="text-blue-600 hover:underline">Өту</a></td>
+                  <td className="p-4 flex items-center gap-2"><Star className="w-5 h-5 text-yellow-500" /> Сыншы жазбашылар</td>
+                  <td className="p-4 font-bold">{stats?.reviewsCount ?? 0}</td>
+                  <td className="p-4"><a href="/admin/synshy" className="text-blue-600 hover:underline">Өту</a></td>
                 </tr>
-                <tr>
-                  <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-gray-500" /> Пайдаланушылар</td>
-                  <td className="p-4 font-bold">{stats?.usersCount ?? 0}</td>
-                  <td className="p-4"><a href="/admin/paidalanushylar" className="text-blue-600 hover:underline">Өту</a></td>
-                </tr>
+                                       <tr>
+                         <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-yellow-500" /> Жаңалықтар</td>
+                         <td className="p-4 font-bold">{stats?.newsCount ?? 0}</td>
+                         <td className="p-4"><a href="/admin/zhanalyqtar" className="text-blue-600 hover:underline">Өту</a></td>
+                       </tr>
+                       <tr>
+                         <td className="p-4 flex items-center gap-2"><FileText className="w-5 h-5 text-gray-500" /> Пайдаланушылар</td>
+                         <td className="p-4 font-bold">{stats?.usersCount ?? 0}</td>
+                         <td className="p-4"><a href="/admin/paidalanushylar" className="text-blue-600 hover:underline">Өту</a></td>
+                       </tr>
               </tbody>
             </table>
           </div>

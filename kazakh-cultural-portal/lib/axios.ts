@@ -85,23 +85,9 @@ export interface Interview {
   updatedAt: string;
 }
 
-export interface SpecialProject {
-  id: string;
-  title: string;
-  content: string;
-  slug?: string;
-  author?: string;
-  status: 'draft' | 'published' | 'pending';
-  views?: number;
-  imageUrl?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export interface SearchResult {
   articles: Article[];
   news: News[];
   videos: Video[];
   interviews: Interview[];
-  projects: SpecialProject[];
 } 

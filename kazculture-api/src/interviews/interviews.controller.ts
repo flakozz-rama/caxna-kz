@@ -26,6 +26,7 @@ import {
 } from '../common/dto/pagination.dto';
 import { Interview } from './entities/interview.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { InterviewStatus } from './entities/interview.entity';
 
 @ApiTags('Interviews')
 @Controller('interviews')
@@ -84,7 +85,9 @@ export class InterviewsController {
     @Query() paginationDto: PaginationDto,
     @Query('status') status?: string,
   ): Promise<PaginationResponseDto<Interview>> {
-    return this.interviewsService.findAll(paginationDto, status as any);
+    // Если статус не передан, показываем все интервью (включая черновики)
+    const interviewStatus = status ? (status as InterviewStatus) : undefined;
+    return this.interviewsService.findAll(paginationDto, interviewStatus);
   }
 
   @UseGuards(JwtAuthGuard)

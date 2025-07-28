@@ -5,14 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Calendar, User, Eye, Play, ArrowRight } from "lucide-react"
-import { useArticles, useNews, useVideos, useInterviews, useSpecialProjects } from "@/lib/api"
+import { useArticles, useNews, useVideos, useInterviews } from "@/lib/api"
 
 export default function HomePage() {
   const { data: articles, isLoading: articlesLoading } = useArticles()
   const { data: news, isLoading: newsLoading } = useNews()
   const { data: videos, isLoading: videosLoading } = useVideos()
   const { data: interviews, isLoading: interviewsLoading } = useInterviews()
-  const { data: projects, isLoading: projectsLoading } = useSpecialProjects()
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('kk-KZ', {
@@ -33,11 +32,10 @@ export default function HomePage() {
       <section className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-5xl font-bold mb-6">
-            Қазақ театр порталы
+            Құрметті, театр сүйер қауым!
           </h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Қазақ халқының бай театр мұрасын, дәстүрлерін және заманауи өнерін зерттеуге арналған платформа
-          </p>
+            Біздің сайтқа қош келдіңіздер! Бұл жерде Сіз театр өнеріне деген ШЫНАЙЫ құрмет, ШЫНАЙЫ баға, ШЫНАЙЫ көзқарасты табасыз! Талғамыңыз бен талабыңыздан шығуға әзірміз!           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link href="/maqala">
               <Button size="lg" variant="secondary" className="text-blue-600">
@@ -119,7 +117,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className="mt-4">
-                      <Link href={`/maqala/${article.slug || article.id}`}>
+                      <Link href={`/maqala/${article.id}`}>
                         <Button variant="outline" className="w-full">
                           Оқу
                         </Button>
@@ -192,7 +190,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     <div className="mt-4">
-                      <Link href={`/zhanalyqtar/${item.slug || item.id}`}>
+                      <Link href={`/zhanalyqtar/${item.id}`}>
                         <Button variant="outline" className="w-full">
                           Оқу
                         </Button>
@@ -290,79 +288,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Special Projects */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Арнайы жобалар</h2>
-            <Link href="/arnaiy-zhobalar">
-              <Button variant="outline">
-                Барлығын көру
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
-          </div>
-          
-          {projectsLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {[...Array(2)].map((_, i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardContent className="p-6">
-                    <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                    <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : projects && projects.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {projects.slice(0, 2).map((project) => (
-                <Card key={project.id} className="hover:shadow-lg transition-shadow">
-                  {project.imageUrl && (
-                    <div className="aspect-video overflow-hidden rounded-t-lg">
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Badge variant={project.status === "active" ? "default" : "secondary"} className="text-xs">
-                        {project.status === "active" ? "Белсенді" : 
-                         project.status === "completed" ? "Аяқталған" : "Жоспарланған"}
-                      </Badge>
-                    </div>
-                    <h3 className="text-xl font-semibold mb-3">
-                      {project.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
-                      {truncateText(project.content, 200)}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <User className="w-4 h-4 mr-1" />
-                        {project.author || "Автор"}
-                      </div>
-                      <Link href={`/arnaiy-zhobalar/${project.slug || project.id}`}>
-                        <Button>
-                          Толығырақ
-                          <ArrowRight className="w-4 h-4 ml-2" />
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500">Арнайы жобалар табылмады</p>
-            </div>
-          )}
-        </div>
-      </section>
+
     </div>
   )
 }

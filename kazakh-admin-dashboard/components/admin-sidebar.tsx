@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, FileText, Newspaper, MessageCircle, FolderOpen, Video, Users, LogOut } from "lucide-react"
+import { Home, FileText, Newspaper, MessageCircle, Video, Users, LogOut, BookOpen, Star } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -22,7 +22,8 @@ const menuItems = [
   { id: "articles", title: "Мақалалар", icon: FileText },
   { id: "news", title: "Жаңалықтар", icon: Newspaper },
   { id: "interviews", title: "Сұхбаттар", icon: MessageCircle },
-  { id: "projects", title: "Арнайы жобалар", icon: FolderOpen },
+  { id: "piesa", title: "Пьесалар", icon: BookOpen },
+  { id: "synshy", title: "Сыншы жазбашылар", icon: Star },
   { id: "videos", title: "Видеолар", icon: Video },
   { id: "users", title: "Пайдаланушылар", icon: Users },
 ]
@@ -36,8 +37,8 @@ export function AdminSidebar({ currentPage, onNavigate }: AdminSidebarProps) {
             <span className="text-white font-bold text-lg">Қ</span>
           </div>
           <div>
-            <h2 className="font-bold text-lg text-gray-900">Мәдени портал</h2>
-            <p className="text-sm text-gray-500">Басқару панелі</p>
+            <h2 className="font-bold text-lg text-gray-900">CAXNA.KZ</h2>
+            <p className="text-sm text-gray-500">Мәдени портал басқару панелі</p>
           </div>
         </div>
       </SidebarHeader>

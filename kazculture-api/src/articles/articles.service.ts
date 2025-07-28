@@ -33,13 +33,19 @@ export class ArticlesService {
     // Генерируем slug если не предоставлен или если он пустой
     if (!createArticleDto.slug || !createArticleDto.slug.trim()) {
       createArticleDto.slug = this.generateSlug(createArticleDto.title);
-      if (!createArticleDto.slug) {
-        createArticleDto.slug = uuidv4();
-      }
+    }
+
+    // Проверяем уникальность slug
+    let finalSlug = createArticleDto.slug;
+    let counter = 1;
+    while (await this.articleRepository.findOne({ where: { slug: finalSlug } })) {
+      finalSlug = `${createArticleDto.slug}-${counter}`;
+      counter++;
     }
 
     const article = this.articleRepository.create({
       ...createArticleDto,
+      slug: finalSlug,
       authorId,
       publishedAt:
         createArticleDto.status === ArticleStatus.PUBLISHED ? new Date() : null,
@@ -54,13 +60,12 @@ export class ArticlesService {
     const { page = 1, limit = 10 } = paginationDto;
     const skip = (page - 1) * limit;
     const queryBuilder = this.articleRepository.createQueryBuilder('article');
+    
+    // Если статус указан, фильтруем по нему, иначе показываем все
     if (status) {
       queryBuilder.where('article.status = :status', { status });
-    } else {
-      queryBuilder.where('article.status = :status', {
-        status: ArticleStatus.PUBLISHED,
-      });
     }
+    
     const [articles, total] = await queryBuilder
       .orderBy('article.createdAt', 'DESC')
       .skip(skip)

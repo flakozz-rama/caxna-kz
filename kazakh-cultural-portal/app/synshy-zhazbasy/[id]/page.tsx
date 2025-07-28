@@ -1,12 +1,12 @@
 import Link from "next/link"
 import Image from "next/image"
 import { ChevronRight, Calendar, User, Star, ArrowLeft } from "lucide-react"
-import { getReviewBySlug } from "@/lib/api"
+import { getReviewById } from "@/lib/api"
 
-export default async function SynshyZhazbasDetailPage({ params }: { params: { slug: string } }) {
+export default async function SynshyZhazbasDetailPage({ params }: { params: { id: string } }) {
   let review: any = null;
   try {
-    review = await getReviewBySlug(params.slug);
+    review = await getReviewById(params.id);
   } catch (e) {
     // Можно добавить обработку ошибки
   }

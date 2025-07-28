@@ -34,7 +34,7 @@ export default async function SuqbatPage() {
                 key={interview.id}
                 className="bg-white rounded-lg shadow-sm border overflow-hidden hover:shadow-md transition-shadow"
               >
-                <Link href={`/suqbat/${interview.slug || interview.id}`}>
+                <Link href={`/suqbat/${interview.id}`}>
                   <div className="relative h-48">
                     <Image
                       src={interview.imageUrl || `/placeholder.svg?height=200&width=400`}
