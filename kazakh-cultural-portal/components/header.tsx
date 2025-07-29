@@ -16,7 +16,7 @@ export default function Header() {
     { href: "/video", label: "Видеолар" },
     { href: "/suqbat", label: "Сұқбаттар" },
     { href: "/piesa", label: "Пьесалар" },
-    { href: "/synshy-zhazbasy", label: "Сыншы жазбашылар" },
+    { href: "/synshy-zhazbasy", label: "Сыншы жазбашы" },
   ]
 
   return (
